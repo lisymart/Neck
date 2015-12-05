@@ -1,0 +1,4 @@
+To run this app you must have Maven installed
+$ sudo apt-get install maven
+
+then 
