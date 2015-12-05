@@ -1,8 +1,5 @@
 To run this app you must have Maven installed
-$ sudo apt-get install maven
-
+`$ sudo apt-get install maven`
 then execute following to run the app
-
-$ mvn tomcat7:run
-
+`$ mvn tomcat7:run`
 Running app is then available at http://localhost:8080/Neck/
