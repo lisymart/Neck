@@ -3,13 +3,13 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<link rel="stylesheet" href="styles.css">
-<title>Neck web app</title>
+<link href="${pageContext.request.contextPath}/resources/styles.css" rel="stylesheet" type="text/css"/>
+<title> Neck </title>
 </head>
 <body>
 <center>
-<h1> Neck web application </h1>
-<form action="ServletInstallationPaths" method="post"> 
+<h1> Neck </h1>
+<form action="/Neck/paths" method="POST"> 
 <table class="table1">
     <tr>
         <td><a>Enter your Bro installation path (../bro/bin/broctl)</a></td>

@@ -35,7 +35,7 @@ public class IndexController {
             if(paths.exists() && !paths.isDirectory()) { 
                 response.sendRedirect("loadFile.jsp");       
             } else {
-            response.sendRedirect("installationPaths.jsp");
+            response.sendRedirect("paths.jsp");
             }
         }
     }

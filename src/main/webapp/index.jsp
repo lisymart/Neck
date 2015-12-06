@@ -4,7 +4,7 @@
 <head>
 <meta charset="UTF-8">
 <link href="${pageContext.request.contextPath}/resources/styles.css" rel="stylesheet" type="text/css"/>
-<title>Neck web app</title>
+<title> Neck </title>
 </head>
 <body>
 <center>
