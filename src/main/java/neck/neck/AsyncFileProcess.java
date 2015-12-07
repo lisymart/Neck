@@ -19,7 +19,6 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class AsyncFileProcess {
-    Logger logger = LoggerFactory.getLogger(AsyncFileProcess.class);
     List<String> lines = new ArrayList<>();
         
     public String process() throws IOException{
@@ -28,7 +27,7 @@ public class AsyncFileProcess {
         String logstashPath = lines.get(1);
         String filePath = lines.get(2);
         removeLastLine("paths.txt");
-        logger.info(filePath + " is being processed.");
+        System.out.println(filePath + " is being processed.");
         
         File cfg = new File("json_iso8601.bro"); 
         
@@ -71,6 +70,7 @@ public class AsyncFileProcess {
             
         File folder = new File(dateFormat.format(date));
         for (String fileName : folder.list()){
+            System.out.println(fileName + " is being logstashed.");
             String logstashCommand = logstashPath + " agent -f " +conf.getConfig().getAbsolutePath()+ " < " + dateFormat.format(date) + "/" +fileName;
             writer = new PrintWriter("script.sh", "UTF-8");     
             writer.println("#!/bin/sh ");
@@ -98,7 +98,7 @@ public class AsyncFileProcess {
         file.delete();
         file = new File("configFile.conf");
         file.delete();
-        logger.info(filePath + " - done.");
+        System.out.println(filePath + " - done.");
         
         return "success";
     }
