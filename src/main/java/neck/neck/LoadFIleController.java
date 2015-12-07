@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 public class LoadFIleController {
 
     @RequestMapping(value = "/loadFile", method = RequestMethod.POST)
-    public void loadFile(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    public String loadFile(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         
         String filePath = request.getParameter("processFilePath");
         File file = new File(filePath);
@@ -27,18 +27,18 @@ public class LoadFIleController {
         switch (filetype[1]) {
             case "pcap" : 
                 System.out.println("pcap");
-                response.sendRedirect("pcap.jsp");
-                break;
+                return "pcap";
             case "csv" :
                 System.out.println("csv");
-                break;
+                return "csv";
             case "log" :
                 System.out.println("log");
-                break;
+                return "log";
     }
         } else {
             request.setAttribute("message", "Path to file is incorrect. Try again.");
-            request.getRequestDispatcher("loadFile.jsp").forward(request, response);
+            return "loadFile";
         }
+        return "loadFile";
     }
 }

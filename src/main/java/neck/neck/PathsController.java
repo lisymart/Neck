@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 public class PathsController {
 
     @RequestMapping(value = "/paths", method = RequestMethod.POST)
-    public void paths(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {        
+    public String paths(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {        
                
         String broPath = request.getParameter("broPath");
         String logstashPath = request.getParameter("logstashPath");
@@ -62,16 +62,16 @@ public class PathsController {
         for (String line : Files.readAllLines(Paths.get("logstashOutput.txt"))) {logstashLines.add(line);}
         
         if (broLines.size() == 0 && logstashLines.size() == 0) {
-            request.setAttribute("message", "Both paths to Bro and Logstash are not correct. Chceck and try again.");
-            request.getRequestDispatcher("paths.jsp").forward(request, response);
+            request.setAttribute("message", "Both paths to Bro and Logstash are not correct or the permission to the Bro directory is denied. Chceck and try again.");
+            return "paths";
         } else {
             if (broLines.size() == 0){
-                request.setAttribute("message", "Path to Bro is not correct. Chceck and try again.");
-            request.getRequestDispatcher("paths.jsp").forward(request, response);} 
+                request.setAttribute("message", "Path to Bro is not correct or the permission to the Bro directory is denied. Chceck and try again.");
+            return "paths";} 
             else {
                 if (logstashLines.size() == 0){
                     request.setAttribute("message", "Path to Logstash is not correct. Chceck and try again.");
-                    request.getRequestDispatcher("paths.jsp").forward(request, response);} 
+                    return "paths";} 
                 else {
                     List<String> broProof = new ArrayList<>();
                     for (String line : broLines.get(0).split("\\ ")) {broProof.add(line);}
@@ -95,11 +95,11 @@ public class PathsController {
                         file.delete();
                         file = new File("logstashOutput.txt");
                         file.delete();
-                        response.sendRedirect("loadFile.jsp");
+                        return "loadFile";
                         }      
                     }
                 }
             }
     
-    }
+    return "paths"; } 
 }

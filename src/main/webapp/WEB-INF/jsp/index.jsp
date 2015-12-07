@@ -13,7 +13,9 @@
 <table class="table1">
 <tr>
 <td>
-    <a> Welcome to Neck web application. Through this app you can upload log files to Elasticsearch. </a>
+    <a> Welcome to Neck web application. </a>
+    <br>
+    <a> Through this app you can upload log files to Elasticsearch. </a>
     <br>
     <a> Applications Logstash and Bro network monitor are necessary to be installed to use this app. </a>
 </td>

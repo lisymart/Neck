@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 public class SuccessController {
 
     @RequestMapping(value = "/success", method = RequestMethod.POST)
-    public void success(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        response.sendRedirect("loadFile.jsp");
+    public String success(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        return "loadFile";
     }
 }

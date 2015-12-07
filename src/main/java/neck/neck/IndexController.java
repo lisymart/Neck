@@ -19,7 +19,7 @@ public class IndexController {
     private static File paths = new File("paths.txt");
 
     @RequestMapping(value = "/index", method = RequestMethod.POST)
-    public void index(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    public String index(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String line = null;
         try{
             URL url = new URL("http://localhost:9200/");
@@ -30,12 +30,12 @@ public class IndexController {
         }        
         if (line == null) {
             request.setAttribute("message", "Elasticsearch is not running. Start ELK and try again.");
-            request.getRequestDispatcher("index.jsp").forward(request, response);        
+            return "index";       
         } else {        
             if(paths.exists() && !paths.isDirectory()) { 
-                response.sendRedirect("loadFile.jsp");       
+                return "loadFile";
             } else {
-            response.sendRedirect("paths.jsp");
+            return "paths";
             }
         }
     }
