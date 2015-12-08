@@ -12,7 +12,7 @@
 <form action="/Neck/paths" method="POST"> 
 <table class="table1">
     <tr>
-        <td><a>Enter your Bro installation path (../bro/bin/broctl)</a></td>
+        <td><a>Enter your Bro installation path (../bro/bin/bro)</a></td>
         <td><input type="text" name="broPath"></td>
     </tr>
     <tr>

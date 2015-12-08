@@ -27,7 +27,7 @@ public class PathsController {
         
         PrintWriter writerSh = new PrintWriter("scriptTest.sh", "UTF-8");     
         writerSh.println("#!/bin/sh ");
-        writerSh.println(broPath + " status");
+        writerSh.println(broPath + "ctl status");
         writerSh.close();
         File broOutput = new File("broOutput.txt");
         ProcessBuilder pb = new ProcessBuilder("/bin/bash", "scriptTest.sh");

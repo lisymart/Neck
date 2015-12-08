@@ -2,6 +2,7 @@ package neck.neck;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
@@ -22,7 +23,8 @@ public class LoadFIleController {
         File file = new File(filePath);
         
         if(file.exists() && !file.isDirectory()){
-        Files.write(Paths.get("paths.txt"), (filePath + "\n").getBytes(), StandardOpenOption.APPEND);        
+            Files.write(Paths.get("paths.txt"), (filePath + "\n").getBytes(), StandardOpenOption.APPEND);
+        
         String[] filetype = filePath.split("\\.");               
         switch (filetype[1]) {
             case "pcap" : 

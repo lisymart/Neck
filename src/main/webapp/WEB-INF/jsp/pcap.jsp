@@ -19,6 +19,10 @@
 <td></td>
 <td> <input class="btn" type="submit" value="Upload to ES"> </td>
 </tr>
+<tr>
+    <td><div class="progress">${progress}</div></td>
+    <td></td>
+</tr>
 </table>
 </form>
 </center>
