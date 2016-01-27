@@ -2,3 +2,4 @@ lib
 target
 json_iso8601.bro
 configFile.conf
+paths.txt

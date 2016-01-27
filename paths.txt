@@ -1,2 +1,0 @@
-/opt/bro/bin/bro
-/opt/logstash2/bin/logstash
