@@ -16,11 +16,10 @@
 <td><a> Enter your file location (../file.pcap) </a></td>
 <td><input type="text" name="processFilePath" /></td>
 </tr>
-<tr>
-<td></td>
-<td> <input class="btn" type="submit" value="Next"> </td>
-</tr>
 </table>
+<br>
+<br>
+<input class="btn" type="submit" value="Next">
 <div class="errorMessage">${message}</div> 
 </form>
 </center>

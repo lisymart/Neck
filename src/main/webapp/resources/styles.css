@@ -3,6 +3,9 @@ table.table1 {
     width: 60%;
     height: 200px;
 }
+th, td {
+    border-bottom: 1px solid #ddd;
+}
 body {
     background-image: url("neckr.png"), url("neckl.png");
     background-repeat: no-repeat;

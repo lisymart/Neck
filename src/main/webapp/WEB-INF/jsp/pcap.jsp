@@ -1,4 +1,5 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -9,21 +10,22 @@
 <body>
 <center>
 <h1> Neck </h1>
+<h3> Here you can change the name of attributes: </h3>
+<br>
 <form action="/Neck/pcap" method="POST"> 
 <table class="table1">
-<tr>
-<td><a> Here are going to be some further options. </a></td>
-<td>  </td>
-</tr>
-<tr>
-<td></td>
-<td> <input class="btn" type="submit" value="Upload to ES"> </td>
-</tr>
-<tr>
-    <td><div class="progress">${progress}</div></td>
-    <td></td>
-</tr>
+    <tr><td><b>log file name</b></td><td><b>attribute orig name</b></td><td><b>your name</b></td></tr>
+<tr></tr>
+<c:forEach var="item" items="${attributesList}">
+    <tr>
+       <td> <c:out value="${item}" /> </td>
+       <td></td>
+       <td> <input type="text" name="${item}"><br> </td> 
+    </tr>
+</c:forEach>
 </table>
+<br>
+<input class="btn" type="submit" value="Upload to ES">
 </form>
 </center>
 </body>

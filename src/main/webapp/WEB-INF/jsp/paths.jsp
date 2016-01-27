@@ -19,11 +19,10 @@
         <td><a> Enter your Logstash installation path (../logstash/bin/logstash) </a></td>
         <td><input type="text" name="logstashPath"></td>
     </tr>
-    <tr>
-        <td></td>
-        <td><input class="btn" type="submit" value="Save"></td>
-    </tr>
 </table>
+<br>
+<br>
+<input class="btn" type="submit" value="Save">
 <div class="errorMessage">${message}</div> 
 </form>
 </center>

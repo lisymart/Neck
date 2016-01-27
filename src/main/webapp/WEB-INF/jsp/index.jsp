@@ -10,21 +10,15 @@
 <center>
 <h1> Neck </h1>
 <form action="/Neck/index" method="POST"> 
-<table class="table1">
-<tr>
-<td>
-    <a> Welcome to Neck web application. </a>
-    <br>
-    <a> Through this app you can upload log files to Elasticsearch. </a>
-    <br>
-    <a> Applications Logstash and Bro network monitor are necessary to be installed to use this app. </a>
-</td>
-</tr>
-<tr></tr>
-<tr>
-<td> <input class="btn" type="submit" value="Begin"> </td>
-</tr>
-</table>
+<a> Welcome to Neck web application. </a>
+<br>
+<a> Through this app you can upload log files to Elasticsearch. </a>
+<br>
+<a> Applications Logstash and Bro network monitor are necessary to be installed to use this app. </a>
+<br>
+<br>
+<br>
+<input class="btn" type="submit" value="Begin">
 <div class="errorMessage">${message}</div> 
 </form>
 </center>

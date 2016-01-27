@@ -1,6 +1,12 @@
 package neck.neck;
 
+import java.io.File;
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Callable;
 import javax.servlet.ServletException;
@@ -8,42 +14,48 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 @Controller
-public class PcapController {
+public class PcapController {    
+       
+    @Autowired
+    LogstashProcessService lps;
     
     @Autowired
-    AsyncFileProcess afp;
+    BroProcessService bps;
+    
+    DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss");
+    DateFormat hourFormat = new SimpleDateFormat("HH-mm-ss");
     
     @RequestMapping(value = "/pcap", method = RequestMethod.POST)
-    public Callable<String> pcap(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    public Callable<String> pcap() throws ServletException, IOException {
         System.out.println(Thread.currentThread().getName());
+        final Date date = bps.getDate();
+        File folder = new File(dateFormat.format(date));
         Callable<String> asyncTask = new Callable<String>() {
  
             @Override
             public String call() throws Exception {
-                return afp.process();
+                return lps.process(date);
       }
     };
-        return asyncTask;
-        //response.sendRedirect("success.jsp");
+        //        response.sendRedirect("/jsp/progress.jsp");
+
+        return asyncTask;        
     }
     
-    @ResponseBody
-    @RequestMapping(value = "/progress", method = RequestMethod.GET)
-    public ModelAndView progress(){
-        Set<Thread> threadSet = Thread.getAllStackTraces().keySet();
-        
-        String progress = "In progress...";
-        if (afp.getProgress() == 0) {progress =  "File is being processed by Bro network controller...";}
-        if (afp.getProgress() > 0 ) {progress =  "File is being Logstashed. [" + afp.getProgress() + " / " + afp.getNumberOfFiles() + "] -- " +  afp.getProcessedFile();}
-        if (afp.getProgress() < 0 ) {progress =  "Your file is not being processed. There must have an error occured.";}
-        if (afp.getProgress() > afp.getNumberOfFiles()) {progress =  "Done";}
-        return new ModelAndView("progress", "progress", progress);
-    }
+    /*
+    @RequestMapping(value = "/pcap", method = RequestMethod.GET)
+    public ModelAndView show(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        final Date date = bps.getDate();
+        List<String> list = new ArrayList();
+        File folder = new File(dateFormat.format(date)); 
+        //        response.sendRedirect("/jsp/progress.jsp");
+
+        return new ModelAndView("pcap", "attributesList", list);        
+    }*/
 }

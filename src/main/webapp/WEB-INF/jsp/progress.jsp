@@ -16,6 +16,7 @@
     <body>
 <center>
 <h1> Neck </h1>
+<form action="/Neck/progress" method="POST"> 
 <table class="table1">
 <tr>
 <td><a> Check the progress of uploading: </a></td>
@@ -26,6 +27,10 @@
 <td> </td>
 </tr>
 </table>
+<br>
+<br>
+<input class="btn" type="submit" value="Upload another file">
+</form>
 </center>
 </body>
 </html>

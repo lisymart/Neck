@@ -25,6 +25,7 @@
     <servlet-mapping>
         <servlet-name>Neck</servlet-name>
         <url-pattern>/</url-pattern>
+        <async-supported>true</async-supported>
     </servlet-mapping>
     <welcome-file-list>
         <welcome-file>/WEB-INF/jsp/index.jsp</welcome-file>
