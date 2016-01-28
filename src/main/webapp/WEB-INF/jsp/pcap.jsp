@@ -14,13 +14,25 @@
 <br>
 <form action="/Neck/pcap" method="POST"> 
 <table class="table1">
-    <tr><td><b>log file name</b></td><td><b>attribute orig name</b></td><td><b>your name</b></td></tr>
+    <tr><td><b>log file name</b></td><td><b>Attribute change</b></td></tr>
 <tr></tr>
 <c:forEach var="item" items="${attributesList}">
     <tr>
-       <td> <c:out value="${item}" /> </td>
-       <td></td>
-       <td> <input type="text" name="${item}"><br> </td> 
+       <td> <b><c:out value="${item.key}" /> </b></td>   
+       <td> 
+       <table class="table2">
+       <tr> <td><b> attribute orig name </b></td>
+	   		<td><b> your name </b></td>
+	   </tr>	
+       <c:forEach var="val" items="${item.value}">
+       <tr>
+       <td> <c:out value="${val}"/> </td>
+       <td> <input type="text" name="${item.key}${val}"><br> </td>
+       </tr> 
+       </c:forEach>
+       </table>       
+       </td>
+       
     </tr>
 </c:forEach>
 </table>

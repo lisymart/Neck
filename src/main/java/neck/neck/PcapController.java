@@ -1,15 +1,29 @@
 package neck.neck;
 
+import java.util.List;
+import java.util.Map;
+import java.io.File;
 import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.concurrent.Callable;
 import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.servlet.ModelAndView;
 
 @Controller
 public class PcapController {    
@@ -34,8 +48,6 @@ public class PcapController {
                 return lps.process(date);
       }
     };
-        //        response.sendRedirect("/jsp/progress.jsp");
-
         return asyncTask;        
     }
     
@@ -43,10 +55,19 @@ public class PcapController {
     @RequestMapping(value = "/pcap", method = RequestMethod.GET)
     public ModelAndView show(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         final Date date = bps.getDate();
-        List<String> list = new ArrayList();
         File folder = new File(dateFormat.format(date)); 
-        //        response.sendRedirect("/jsp/progress.jsp");
-
-        return new ModelAndView("pcap", "attributesList", list);        
+        ArrayList<String> names = new ArrayList<>();
+        List<File> list = Arrays.asList(folder.listFiles());
+        Map<String, ArrayList<String>> attributes = new HashMap <String, ArrayList<String>>();
+        for (File f : list) {
+        	String line = Files.newBufferedReader(f.toPath(), Charset.forName("ISO-8859-1")).readLine();
+        	for (String name : line.split(",")){
+        		names.add(name.split(":")[0]);
+        	}
+        	attributes.put(f.getName(), names);
+        	names.clear();        	
+        }
+        return new ModelAndView("pcap", "attributesList", attributes);        
     }*/
 }
+;

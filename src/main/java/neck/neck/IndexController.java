@@ -26,6 +26,7 @@ public class IndexController {
             URLConnection urlConnection = url.openConnection();
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
             line = bufferedReader.readLine();
+            bufferedReader.close();
         } catch (ConnectException e) {            
         }        
         if (line == null) {
