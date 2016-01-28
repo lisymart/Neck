@@ -14,7 +14,7 @@
         <title> Neck </title>
     </head>
     <body>
-<center>
+<div id="center">
 <h1> Neck </h1>
 <form action="/Neck/progress" method="POST"> 
 <table class="table1">
@@ -31,6 +31,6 @@
 <br>
 <input class="btn" type="submit" value="Upload another file">
 </form>
-</center>
+</div>
 </body>
 </html>

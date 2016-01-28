@@ -10,6 +10,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.RandomAccessFile;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.text.DateFormat;
@@ -33,7 +34,7 @@ public class BroProcessService {
     }
        
     public void broProcess() throws IOException{
-    for (String line : Files.readAllLines(Paths.get("paths.txt"))) {lines.add(line);}
+    for (String line : Files.readAllLines(Paths.get("paths.txt"), Charset.forName("ISO-8859-1"))) {lines.add(line);}
         String broPath = lines.get(0);
         String filePath = lines.get(lines.size() - 1);
         removeLastLine("paths.txt");

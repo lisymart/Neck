@@ -1,23 +1,15 @@
 package neck.neck;
 
-import java.io.File;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
-import java.util.Set;
 import java.util.concurrent.Callable;
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.servlet.ModelAndView;
 
 @Controller
 public class PcapController {    
@@ -35,7 +27,6 @@ public class PcapController {
     public Callable<String> pcap() throws ServletException, IOException {
         System.out.println(Thread.currentThread().getName());
         final Date date = bps.getDate();
-        File folder = new File(dateFormat.format(date));
         Callable<String> asyncTask = new Callable<String>() {
  
             @Override

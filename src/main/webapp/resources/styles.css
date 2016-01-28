@@ -1,21 +1,25 @@
 table.table1 {    
     text-align: center;
-    width: 60%;
     height: 200px;
+    width: 960px;
 }
 th, td {
     border-bottom: 1px solid #ddd;
 }
+#center { 
+    text-align:center; margin: 0 auto; width:960px;
+    } 
 body {
     background-image: url("neckr.png"), url("neckl.png");
     background-repeat: no-repeat;
     background-position: right top, left top;
     background-size: 20%;
     font-size: 20px;
+    text-align:center;
 }
 
 div.errorMessage {
-    width: 50%;
+    text-align:center;
     color: darkred;
     font-weight:bold;
     background-color: lightpink;

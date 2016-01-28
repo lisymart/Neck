@@ -13,8 +13,6 @@
     <servlet-mapping>
         <servlet-name>default</servlet-name>
         <url-pattern>*.css</url-pattern>
-        <dispatcher>ASYNC</dispatcher>
-        <async-supported>true</async-supported>
     </servlet-mapping>
     <servlet>
         <servlet-name>Neck</servlet-name>
@@ -25,7 +23,6 @@
     <servlet-mapping>
         <servlet-name>Neck</servlet-name>
         <url-pattern>/</url-pattern>
-        <async-supported>true</async-supported>
     </servlet-mapping>
     <welcome-file-list>
         <welcome-file>/WEB-INF/jsp/index.jsp</welcome-file>

@@ -12,7 +12,7 @@ import java.util.zip.ZipOutputStream;
 
 public class FolderZipper {
 
-  static public void zipFolder(String srcFolder, String destZipFile) throws Exception {
+  public void zipFolder(String srcFolder, String destZipFile) throws Exception {
     ZipOutputStream zip = null;
     FileOutputStream fileWriter = null;
 
@@ -38,6 +38,7 @@ public class FolderZipper {
       while ((len = in.read(buf)) > 0) {
         zip.write(buf, 0, len);
       }
+      in.close();
     }
   }
 

@@ -3,6 +3,7 @@ package neck.neck;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -41,7 +42,7 @@ public class PathsController {
         File file = new File("scriptTest.sh");
         file.delete();
         List<String> broLines = new ArrayList<>();
-        for (String line : Files.readAllLines(Paths.get("broOutput.txt"))) {broLines.add(line);}
+        for (String line : Files.readAllLines(Paths.get("broOutput.txt"), Charset.forName("ISO-8859-1"))) {broLines.add(line);}
         
         writerSh = new PrintWriter("scriptTest.sh", "UTF-8");     
         writerSh.println("#!/bin/sh ");
@@ -59,7 +60,7 @@ public class PathsController {
         file = new File("scriptTest.sh");
         file.delete();
         List<String> logstashLines = new ArrayList<>();
-        for (String line : Files.readAllLines(Paths.get("logstashOutput.txt"))) {logstashLines.add(line);}
+        for (String line : Files.readAllLines(Paths.get("logstashOutput.txt"), Charset.forName("ISO-8859-1"))) {logstashLines.add(line);}
         
         if (broLines.size() == 0 && logstashLines.size() == 0) {
             request.setAttribute("message", "Both paths to Bro and Logstash are not correct or the permission to the Bro directory is denied. Chceck and try again.");

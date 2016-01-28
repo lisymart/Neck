@@ -7,7 +7,7 @@
 <title> Neck </title>
 </head>
 <body>
-<center>
+<div id="center">
 <h1> Neck </h1>
 <form action="/Neck/loadFile" method="POST"> 
 <br>
@@ -22,6 +22,6 @@
 <input class="btn" type="submit" value="Next">
 <div class="errorMessage">${message}</div> 
 </form>
-</center>
+</div>
 </body>
 </html>

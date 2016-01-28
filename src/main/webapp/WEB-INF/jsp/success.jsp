@@ -7,7 +7,7 @@
 <title> Neck </title>
 </head>
 <body>
-<center>
+<div id="center">
 <h1> Neck </h1>
 <form action="/Neck/success" method="POST"> 
 <table class="table1">
@@ -21,6 +21,6 @@
 </tr>
 </table>
 </form>
-</center>
+</div>
 </body>
 </html>

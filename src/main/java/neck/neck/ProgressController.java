@@ -5,7 +5,6 @@
  */
 package neck.neck;
 
-import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,7 +21,7 @@ public class ProgressController {
     @ResponseBody
     @RequestMapping(value = "/progress", method = RequestMethod.GET)
     public ModelAndView progress(){
-        Set<Thread> threadSet = Thread.getAllStackTraces().keySet();
+        //Set<Thread> threadSet = Thread.getAllStackTraces().keySet();
         
         String progress = "In progress...";
         if (lps.getProgress() == 0) {progress =  "File is being processed by Bro network controller...";}

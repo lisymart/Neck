@@ -3,6 +3,7 @@ package neck.neck;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.text.DateFormat;
@@ -23,8 +24,6 @@ public class LogstashProcessService{
     private Integer progress = 0;
     private Integer numberOfFiles = 0;
     private String processedFile;
-    private String filePath;
-
     public int getProgress() {
         return progress;
     }
@@ -40,7 +39,7 @@ public class LogstashProcessService{
     @Async
     public String process(Date date) throws IOException, InterruptedException{
         System.out.println(Thread.currentThread().getName());        
-        for (String line : Files.readAllLines(Paths.get("paths.txt"))) {lines.add(line);}
+        for (String line : Files.readAllLines(Paths.get("paths.txt"), Charset.forName("ISO-8859-1"))) {lines.add(line);}
         String logstashPath = lines.get(1);
         
         LogConfig conf = new LogConfig();

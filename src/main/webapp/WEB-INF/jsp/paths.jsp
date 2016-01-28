@@ -7,7 +7,7 @@
 <title> Neck </title>
 </head>
 <body>
-<center>
+<div id="center">
 <h1> Neck </h1>
 <form action="/Neck/paths" method="POST"> 
 <table class="table1">
@@ -25,7 +25,7 @@
 <input class="btn" type="submit" value="Save">
 <div class="errorMessage">${message}</div> 
 </form>
-</center>
+</div>
 </body>
 </html>
 

@@ -8,7 +8,7 @@
 <title> Neck </title>
 </head>
 <body>
-<center>
+<div id="center">
 <h1> Neck </h1>
 <h3> Here you can change the name of attributes: </h3>
 <br>
@@ -27,7 +27,7 @@
 <br>
 <input class="btn" type="submit" value="Upload to ES">
 </form>
-</center>
+</div>
 </body>
 </html>
 
