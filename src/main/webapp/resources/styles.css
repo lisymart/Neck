@@ -1,11 +1,10 @@
 table.table1 {    
     text-align: center;
     height: 200px;
-    width: 960px;
+    width: 90%;
 }
 table.table2 {
 	text-align: center;
-	width: 640px;
 	margin: 0 auto;	
 }
 th, td {

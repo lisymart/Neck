@@ -57,33 +57,5 @@ public class LoadFIleController {
             return "loadFile";
         }
         return "loadFile";
-    }
-    
-    
-    @RequestMapping(value = "/loadFile", method = RequestMethod.GET)
-    public ModelAndView show(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        final Date date = bps.getDate();
-        File folder = new File(dateFormat.format(date)); 
-        List<File> list = Arrays.asList(folder.listFiles());
-        HashMap<String, ArrayList<String>> attributes = new HashMap <String, ArrayList<String>>();
-        for (File f : list) {
-        	String line = Files.newBufferedReader(f.toPath(), Charset.forName("ISO-8859-1")).readLine();
-            ArrayList<String> names = new ArrayList<>();
-            List<String> temp = Arrays.asList(line.split("\":"));
-            for (String s: temp){
-            	List<String> temp2 = Arrays.asList(s.split(","));
-            	names.add(temp2.get(temp2.size()-1)); 
-            	
-            }
-            names.remove(names.size()-1);
-            ArrayList<String> names2 = new ArrayList<>();
-            for (String s : names){
-            	names2.add(s.split("\"")[1]);
-            }
-        	attributes.put(f.getName(), names2);
-        }
-        System.out.println(attributes);
-        return new ModelAndView("pcap", "attributesList", attributes);        
-    }
-    
+    }      
 }

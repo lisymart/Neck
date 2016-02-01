@@ -10,8 +10,8 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
-
 import java.util.logging.Level;
 import org.springframework.stereotype.Service;
 import org.springframework.scheduling.annotation.Async;
@@ -37,18 +37,18 @@ public class LogstashProcessService{
     }
      
     @Async
-    public String process(Date date) throws IOException, InterruptedException{
+    public String process(Date date, HashMap<String, HashMap<String, String>> attributes) throws IOException, InterruptedException{
         System.out.println(Thread.currentThread().getName());        
         for (String line : Files.readAllLines(Paths.get("paths.txt"), Charset.forName("ISO-8859-1"))) {lines.add(line);}
         String logstashPath = lines.get(1);
-        
-        LogConfig conf = new LogConfig();
-            
         File folder = new File(dateFormat.format(date));
         numberOfFiles = folder.list().length;
-        for (String fileName : folder.list()){ 
+        
+        for (String fileName : attributes.keySet()){
+        
             if (fileName.endsWith(".log")){
-            progress++;
+            
+            LogConfig conf = new LogConfig(attributes.get(fileName));
             processedFile = fileName;
             System.out.println(fileName + " is being logstashed.");
             String logstashCommand = logstashPath + " agent -f " +conf.getConfig().getAbsolutePath()+ " < " + dateFormat.format(date) + "/" +fileName;
