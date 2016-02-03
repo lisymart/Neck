@@ -10,30 +10,21 @@
 <body>
 <div id="center">
 <h1> Neck </h1>
-<h3> Here you can change the name of attributes: </h3>
+<h3> Here are selected attributes from the first 1000 lines of each log. </h3>
+<h3> You can change the name of attributes here: </h3>
 <br>
 <form action="/Neck/pcap" method="POST"> 
 <table class="table1">
-    <tr><td><b>log file name</b></td><td><b>Attribute change</b></td></tr>
+<tr>
+<td><b> Attribute orig name </b></td>
+<td><b> Your change </b></td>
+</tr>
 <tr></tr>
 <c:forEach var="item" items="${attributesList}">
-    <tr>
-       <td> <b><c:out value="${item.key}" /> </b></td>   
-       <td> 
-       <table class="table2">
-       <tr> <td><b> attribute orig name </b></td>
-	   		<td><b> your name </b></td>
-	   </tr>	
-       <c:forEach var="val" items="${item.value}">
-       <tr>
-       <td> <c:out value="${val}"/> </td>
-       <td> <input type="text" name="${item.key}${val}"><br> </td>
-       </tr> 
-       </c:forEach>
-       </table>       
-       </td>
-       
-    </tr>
+<tr>
+<td> <c:out value="${item}"/> </td>
+<td> <input type="text" name="${item}"><br> </td>
+</tr> 
 </c:forEach>
 </table>
 <br>

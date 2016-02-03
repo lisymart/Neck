@@ -6,6 +6,7 @@ import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.TreeMap;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -21,9 +22,9 @@ public class LogConfig {
     private File config;
 
 
-    public LogConfig(HashMap<String, String> input) throws FileNotFoundException, UnsupportedEncodingException {
+    public LogConfig(TreeMap<String, String> input) throws FileNotFoundException, UnsupportedEncodingException {
         PrintWriter writerSh = new PrintWriter("configFile.conf", "UTF-8");     
-        HashMap <String, String> renameMap = new HashMap<String, String>();
+        TreeMap <String, String> renameMap = new TreeMap<String, String>();
         ArrayList <String> removeList = new ArrayList<String>();
         
         for (String key : input.keySet()){
