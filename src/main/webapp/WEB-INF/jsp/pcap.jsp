@@ -10,8 +10,7 @@
 <body>
 <div id="center">
 <h1> Neck </h1>
-<h3> Here are selected attributes from the first 1000 lines of each log. </h3>
-<h3> You can change the name of attributes here: </h3>
+<h5> Here are selected attributes from the first 1000 lines of each log. You can change the name of attributes here: </h5>
 <br>
 <form action="/Neck/pcap" method="POST"> 
 <table class="table1">
@@ -27,6 +26,12 @@
 </tr> 
 </c:forEach>
 </table>
+<h5> And here you can add any other logstash configuration. Please use the whole filter configuration e.g.:  </h5>
+<i> mutate{rename => {"fieldName" => "newName"}} </i>
+<br><br>
+<textarea class="addition" name="addition" rows=10>
+</textarea>
+<br>
 <br>
 <input class="btn" type="submit" value="Upload to ES">
 </form>

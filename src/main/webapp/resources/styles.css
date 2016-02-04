@@ -1,11 +1,7 @@
 table.table1 {    
     text-align: center;
     height: 200px;
-    width: 90%;
-}
-table.table2 {
-	text-align: center;
-	margin: 0 auto;	
+    width: 100%;
 }
 th, td {
     border-bottom: 1px solid #ddd;
@@ -22,7 +18,9 @@ body {
     font-size: 20px;
     text-align:center;
 }
-
+.addition{
+	width: 100%;
+}
 div.errorMessage {
     text-align:center;
     color: darkred;

@@ -5,7 +5,6 @@ import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.TreeMap;
 
 /*
@@ -22,7 +21,7 @@ public class LogConfig {
     private File config;
 
 
-    public LogConfig(TreeMap<String, String> input) throws FileNotFoundException, UnsupportedEncodingException {
+    public LogConfig(TreeMap<String, String> input, String addition) throws FileNotFoundException, UnsupportedEncodingException {
         PrintWriter writerSh = new PrintWriter("configFile.conf", "UTF-8");     
         TreeMap <String, String> renameMap = new TreeMap<String, String>();
         ArrayList <String> removeList = new ArrayList<String>();
@@ -38,7 +37,6 @@ public class LogConfig {
         
         writerSh.println("input { stdin {} }");
         writerSh.println("filter { ");
-        writerSh.println("json { source => \"message\" }");
         writerSh.println("date { match => [\"ts\", \"ISO8601\"] remove_field => [\"ts\"] }");
         writerSh.println("mutate { ");
         if (!renameMap.isEmpty()) {
@@ -49,13 +47,16 @@ public class LogConfig {
         if (!removeList.isEmpty()){
         	writerSh.println("remove_field => [");
         	for (int i = 0; i<removeList.size() - 1; i++){
-        		writerSh.println("\"" + removeList.get(i) + "\",");
+        		writerSh.print("\"" + removeList.get(i) + "\",");
         	}
-        	writerSh.println("\"" + removeList.get(removeList.size() - 1) + "\"]");
+        	writerSh.println("\"" + removeList.get(removeList.size() - 1) + "\"]}");
         }
-        writerSh.println("}");        
+        if (addition != null){
+        	writerSh.println(addition);
+        }
         writerSh.println("ruby {code => \"event.to_hash.keys.each { |k| event[ k.sub('.','-') ] = event.remove(k) if k.include?'.' }\"} }");
-        writerSh.println("output { elasticsearch { hosts => [\"localhost:9200\"] } }");
+        writerSh.println("output { elasticsearch { hosts => [\"localhost:9200\"] }");
+        writerSh.println("}");
         writerSh.close();
 
     }

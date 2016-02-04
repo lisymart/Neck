@@ -10,8 +10,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.TreeMap;
 import java.util.TreeSet;
@@ -19,7 +17,6 @@ import java.util.concurrent.Callable;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -45,15 +42,16 @@ public class PcapController {
     @RequestMapping(value = "/pcap", method = RequestMethod.POST)
     public Callable<String> pcap(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         System.out.println(Thread.currentThread().getName());
+        final String addition = request.getParameter("addition");
+        final Date date = bps.getDate();
         for (String attName : attributes){
         	change.put(attName, request.getParameter(attName));
-        }
-        final Date date = bps.getDate();
+        }        
         Callable<String> asyncTask = new Callable<String>() {
  
             @Override
             public String call() throws Exception {
-                return lps.process(date, change);
+                return lps.process(date, change, addition);
       }
     };
         return asyncTask;        
@@ -68,7 +66,7 @@ public class PcapController {
         List<File> list = Arrays.asList(folder.listFiles());        
         for (File f : list) {
         	BufferedReader br = Files.newBufferedReader(f.toPath(), Charset.forName("ISO-8859-1")); 
-        	String line = br.readLine(); 
+        	String line = br.readLine();   	
         	int i = 0;
         	while (line != null && i<=1000) {        		        		
         		ArrayList<String> names = new ArrayList<>();
@@ -83,10 +81,9 @@ public class PcapController {
         			names2.add(s.split("\"")[1]);
         		}
         		attributes.addAll(names2); 
-        		line = br.readLine();
+        		line = br.readLine();        		
         		i++;
         	}
-        	br.close();
         }
         System.out.println(attributes);
         return new ModelAndView("pcap", "attributesList", attributes);        

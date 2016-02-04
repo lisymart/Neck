@@ -41,7 +41,7 @@ public class BroProcessService {
         System.out.println(filePath + " is being processed.");
         File cfg = new File("json_iso8601.bro"); 
         
-        String broCommand = broPath + " -r " + filePath + " " + cfg.getAbsolutePath();            
+        String broCommand = broPath + " -r " + filePath + " " + cfg.getAbsolutePath();  
 
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss");
         DateFormat hourFormat = new SimpleDateFormat("HH-mm-ss");
