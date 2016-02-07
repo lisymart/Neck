@@ -37,14 +37,18 @@ public class LogConfig {
         
         writerSh.println("input { stdin {} }");
         writerSh.println("filter { ");
+        writerSh.println("json {source => \"message\"}");
         writerSh.println("date { match => [\"ts\", \"ISO8601\"] remove_field => [\"ts\"] }");
-        writerSh.println("mutate { ");
+        
         if (!renameMap.isEmpty()) {
+        	writerSh.println("mutate { ");
         	for (String fieldName : renameMap.keySet()){
         		writerSh.println("rename => {\"" + fieldName + "\" => \"" + renameMap.get(fieldName) +"\"} ");
         	}
+        	writerSh.println("}");
         	}
         if (!removeList.isEmpty()){
+        	writerSh.println("mutate { ");
         	writerSh.println("remove_field => [");
         	for (int i = 0; i<removeList.size() - 1; i++){
         		writerSh.print("\"" + removeList.get(i) + "\",");
@@ -56,6 +60,7 @@ public class LogConfig {
         }
         writerSh.println("ruby {code => \"event.to_hash.keys.each { |k| event[ k.sub('.','-') ] = event.remove(k) if k.include?'.' }\"} }");
         writerSh.println("output { elasticsearch { hosts => [\"localhost:9200\"] }");
+        writerSh.println("stdout { codec => rubydebug }");
         writerSh.println("}");
         writerSh.close();
 
