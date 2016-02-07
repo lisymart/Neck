@@ -49,7 +49,7 @@ public class LogConfig {
         	}
         if (!removeList.isEmpty()){
         	writerSh.println("mutate { ");
-        	writerSh.println("remove_field => [");
+        	writerSh.print("remove_field => [");
         	for (int i = 0; i<removeList.size() - 1; i++){
         		writerSh.print("\"" + removeList.get(i) + "\",");
         	}

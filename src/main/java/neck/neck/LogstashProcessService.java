@@ -52,7 +52,6 @@ public class LogstashProcessService{
             	processedFile = fileName;
             	System.out.println(fileName + " is being logstashed.");
             	String logstashCommand = logstashPath + " agent -f " +configuration+ " < " + dateFormat.format(date) + "/" +fileName;
-            	System.out.println(logstashCommand);
             	PrintWriter writer = new PrintWriter("script" + hourFormat.format(date) +".sh", "UTF-8");     
             	writer.println("#!/bin/sh ");
             	writer.println(logstashCommand);
