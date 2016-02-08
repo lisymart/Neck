@@ -21,45 +21,25 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 
 @Controller
 public class PcapController {    
-       
-    @Autowired
-    LogstashProcessService lps;
-    
-    @Autowired
-    BroProcessService bps;
-    
+	@Autowired
+	private BroProcessService bps;
+	@Autowired
+	private LogstashProcessService lps;
     private TreeSet<String> attributes;
     private TreeMap<String, String> change = new TreeMap<String, String>();
     
     DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss");
     DateFormat hourFormat = new SimpleDateFormat("HH-mm-ss");
     
-    @RequestMapping(value = "/pcap", method = RequestMethod.POST)
-    public Callable<String> pcap(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        System.out.println(Thread.currentThread().getName());
-        final String addition = request.getParameter("addition");
-        final Date date = bps.getDate();
-        for (String attName : attributes){
-        	change.put(attName, request.getParameter(attName));
-        }        
-        Callable<String> asyncTask = new Callable<String>() {
- 
-            @Override
-            public String call() throws Exception {
-                return lps.process(date, change, addition);
-      }
-    };
-        return asyncTask;        
-    }
-    
-    
+    @ResponseBody
     @RequestMapping(value = "/pcap", method = RequestMethod.GET)
-    public ModelAndView show(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    public ModelAndView pcap() throws ServletException, IOException {
         final Date date = bps.getDate();
         attributes = new TreeSet<String>();
         File folder = new File(dateFormat.format(date)); 
@@ -85,7 +65,26 @@ public class PcapController {
         		i++;
         	}
         }
-        System.out.println(attributes);
         return new ModelAndView("pcap", "attributesList", attributes);        
     }
+    
+    @RequestMapping(value = "/pcap", method = RequestMethod.POST)
+    public Callable<String> process(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        System.out.println(Thread.currentThread().getName());
+        final String addition = request.getParameter("addition");
+        final Date date = bps.getDate();
+        for (String attName : attributes){
+        	change.put(attName, request.getParameter(attName));
+        }        
+        Callable<String> asyncTask = new Callable<String>() {
+ 
+            @Override
+            public String call() throws Exception {
+                return lps.process(date, change, addition);
+      }
+    };
+        return asyncTask;        
+    }
+    
+    
 }
