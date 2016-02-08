@@ -20,7 +20,6 @@ import org.springframework.scheduling.annotation.Async;
 public class LogstashProcessService{
     DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss");
     DateFormat hourFormat = new SimpleDateFormat("HH-mm-ss");
-    private List<String> lines = new ArrayList<>();
     private Integer progress = -1;
     private Integer numberOfFiles = 0;
     private String processedFile;
@@ -40,8 +39,6 @@ public class LogstashProcessService{
     public String process(Date date, TreeMap<String, String> attributes, String addition) throws IOException, InterruptedException{
         System.out.println(Thread.currentThread().getName());   
         progress++;
-        for (String line : Files.readAllLines(Paths.get("paths.txt"), Charset.forName("ISO-8859-1"))) {lines.add(line);}
-        String logstashPath = lines.get(1);
         File folder = new File(dateFormat.format(date));
         numberOfFiles = folder.list().length + 1;
         LogConfig conf = new LogConfig(attributes, addition);
@@ -51,10 +48,9 @@ public class LogstashProcessService{
             	progress++;
             	processedFile = fileName;
             	System.out.println(fileName + " is being logstashed.");
-            	String logstashCommand = logstashPath + " agent -f " +configuration+ " < " + dateFormat.format(date) + "/" +fileName;
             	PrintWriter writer = new PrintWriter("script" + hourFormat.format(date) +".sh", "UTF-8");     
             	writer.println("#!/bin/sh ");
-            	writer.println(logstashCommand);
+            	writer.println("logstash agent -f " +configuration+ " < " + dateFormat.format(date) + "/" +fileName);
             	writer.close();
             	ProcessBuilder pb = new ProcessBuilder("/bin/bash", "script" + hourFormat.format(date) +".sh");
             	Process p = pb.start();           

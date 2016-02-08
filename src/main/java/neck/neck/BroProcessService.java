@@ -35,14 +35,11 @@ public class BroProcessService {
        
     public void broProcess() throws IOException{
     for (String line : Files.readAllLines(Paths.get("paths.txt"), Charset.forName("ISO-8859-1"))) {lines.add(line);}
-        String broPath = lines.get(0);
         String filePath = lines.get(lines.size() - 1);
         removeLastLine("paths.txt");
         System.out.println(filePath + " is being processed.");
         File cfg = new File("json_iso8601.bro"); 
         
-        String broCommand = broPath + " -r " + filePath + " " + cfg.getAbsolutePath();  
-
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss");
         DateFormat hourFormat = new SimpleDateFormat("HH-mm-ss");
         
@@ -50,7 +47,7 @@ public class BroProcessService {
         writer.println("#!/bin/sh ");
         writer.println("mkdir " + dateFormat.format(date));
         writer.println("cd " + dateFormat.format(date));
-        writer.println(broCommand);
+        writer.println("bro -r " + filePath + " " + cfg.getAbsolutePath());
         writer.println("rm -r .state");
         writer.println("cd ..");
         writer.close();

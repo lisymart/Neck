@@ -11,24 +11,14 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 
-@Controller
+
 public class PathsController {
-
-    @RequestMapping(value = "/paths", method = RequestMethod.POST)
-    public String paths(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {        
-               
-        String broPath = request.getParameter("broPath");
-        String logstashPath = request.getParameter("logstashPath");
-        
+    public ArrayList<String> checkInstallations() throws ServletException, IOException {        
+    	ArrayList<String> running = new ArrayList<String>();
         PrintWriter writerSh = new PrintWriter("scriptTest.sh", "UTF-8");     
         writerSh.println("#!/bin/sh ");
-        writerSh.println(broPath + "ctl status");
+        writerSh.println("bro -version");
         writerSh.close();
         File broOutput = new File("broOutput.txt");
         ProcessBuilder pb = new ProcessBuilder("/bin/bash", "scriptTest.sh");
@@ -46,7 +36,7 @@ public class PathsController {
         
         writerSh = new PrintWriter("scriptTest.sh", "UTF-8");     
         writerSh.println("#!/bin/sh ");
-        writerSh.println(logstashPath + " --version");
+        writerSh.println("logstash --version");
         writerSh.close();
         File logstashOutput = new File("logstashOutput.txt");
         pb = new ProcessBuilder("/bin/bash", "scriptTest.sh");
@@ -62,45 +52,60 @@ public class PathsController {
         List<String> logstashLines = new ArrayList<>();
         for (String line : Files.readAllLines(Paths.get("logstashOutput.txt"), Charset.forName("ISO-8859-1"))) {logstashLines.add(line);}
         
-        if (broLines.size() == 0 && logstashLines.size() == 0) {
-            request.setAttribute("message", "Both paths to Bro and Logstash are not correct or the permission to the Bro directory is denied. Chceck and try again.");
-            return "paths";
-        } else {
-            if (broLines.size() == 0){
-                request.setAttribute("message", "Path to Bro is not correct or the permission to the Bro directory is denied. Chceck and try again.");
-            return "paths";} 
-            else {
-                if (logstashLines.size() == 0){
-                    request.setAttribute("message", "Path to Logstash is not correct. Chceck and try again.");
-                    return "paths";} 
-                else {
-                    List<String> broProof = new ArrayList<>();
-                    for (String line : broLines.get(0).split("\\ ")) {broProof.add(line);}
+        writerSh = new PrintWriter("scriptTest.sh", "UTF-8");     
+        writerSh.println("#!/bin/sh ");
+        writerSh.println("hadoop version");
+        writerSh.close();
+        File hadoopOutput = new File("hadoopOutput.txt");
+        pb = new ProcessBuilder("/bin/bash", "scriptTest.sh");
+        pb.redirectOutput(hadoopOutput);
+        p = pb.start();
+        try {
+            p.waitFor();
+        } catch (InterruptedException ex) {
+            Logger.getLogger(PathsController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        file = new File("scriptTest.sh");
+        file.delete();
+        List<String> hadoopLines = new ArrayList<>();
+        for (String line : Files.readAllLines(Paths.get("hadoopOutput.txt"), Charset.forName("ISO-8859-1"))) {hadoopLines.add(line);}
         
-                    List<String> logstashProof = new ArrayList<>();
-                    for (String line : logstashLines.get(0).split("\\ ")) {logstashProof.add(line);}
+        if (broLines.size() != 0){
+        	List<String> broProof = new ArrayList<>();
+        	for (String line : broLines.get(0).split(" ")) {broProof.add(line);}
+        	if (broProof.get(0).equals("bro")){
+        		running.add("bro");
+        	}
+        }
+
+        if (logstashLines.size() != 0){
+        	List<String> logstashProof = new ArrayList<>();
+        	for (String line : logstashLines.get(0).split(" ")) {logstashProof.add(line);}
+        	if (logstashProof.get(0).equals("logstash")){
+        		running.add("logstash");
+        	}
+        }
         
-                    if (broProof.get(0).equals("Getting") && logstashProof.get(0).equals("logstash")){
-                        PrintWriter writer;
-                        writer = new PrintWriter("paths.txt", "UTF-8");          
-                        writer.println(broPath);
-                        writer.println(logstashPath);
-                        writer.close();
+        if (hadoopLines.size() != 0){
+        	List<String> hadoopProof = new ArrayList<>();
+        	for (String line : hadoopLines.get(0).split(" ")) {hadoopProof.add(line);}
+        	if (hadoopProof.get(0).equals("Hadoop")){
+        		running.add("hadoop");
+        	}
+        }
+        
+        PrintWriter writer = new PrintWriter("json_iso8601.bro");
+        writer.println("@load policy/tuning/json-logs");
+        writer.println("redef LogAscii::json_timestamps = JSON::TS_ISO8601;");
+        writer.close();
                         
-                        writer = new PrintWriter("json_iso8601.bro");
-                        writer.println("@load policy/tuning/json-logs");
-                        writer.println("redef LogAscii::json_timestamps = JSON::TS_ISO8601;");
-                        writer.close();
-                        
-                        file = new File("broOutput.txt");
-                        file.delete();
-                        file = new File("logstashOutput.txt");
-                        file.delete();
-                        return "loadFile";
-                        }      
-                    }
-                }
-            }
-    
-    return "paths"; } 
+        file = new File("broOutput.txt");
+        file.delete();
+        file = new File("logstashOutput.txt");
+        file.delete();
+        file = new File("hadoopOutput.txt");
+        file.delete();
+        
+        return running; 
+    }
 }
