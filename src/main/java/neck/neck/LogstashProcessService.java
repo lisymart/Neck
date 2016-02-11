@@ -45,7 +45,7 @@ public class LogstashProcessService{
             	System.out.println(fileName + " is being logstashed.");
             	PrintWriter writer = new PrintWriter("script" + hourFormat.format(date) +".sh", "UTF-8");     
             	writer.println("#!/bin/sh ");
-            	writer.println("logstash agent -f " +configuration+ " < " + dateFormat.format(date) + "/" +fileName);
+            	writer.println("logstash agent -f " +configuration+ " < " + System.getProperty("user.dir")+ "/" +dateFormat.format(date) + "/" +fileName);
             	writer.close();
             	ProcessBuilder pb = new ProcessBuilder("/bin/bash", "script" + hourFormat.format(date) +".sh");
             	Process p = pb.start();           
