@@ -1,5 +1,5 @@
 # Neck 
-This application works with Elasticsearch 2.0.0, Logstash 2.1.0, Bro 2.4.1 Hadoop 2.6.0  
+This application works with Elasticsearch 2.0.0, Logstash 2.1.0, Bro 2.4.1 Tachyon 0.8.2 with Hadoop 2.6.0  
 .bashrc must contain enviroment variables:  
 
 export LOGSTASH_HOME=/dir/logstash  
@@ -7,8 +7,8 @@ export PATH=$PATH:$LOGSTASH_HOME/bin
 export BRO_HOME=/dir/bro  
 export PATH=$PATH:$BRO_HOME/bin  
 export JAVA_HOME=/dir/java-7-oracle  
-export HADOOP_HOME=/dir/hadoop  
-export PATH=$PATH:$HADOOP_HOME/bin  
+export TACHYON_HOME=/dir/tachyon  
+export PATH=$PATH:$TACHYON_HOME/bin  
 
 Prerequisites to run this app : Java 7, Maven  
 

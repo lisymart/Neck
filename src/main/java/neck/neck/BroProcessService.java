@@ -36,7 +36,6 @@ public class BroProcessService {
     public void broProcess() throws IOException{
     for (String line : Files.readAllLines(Paths.get("paths.txt"), Charset.forName("ISO-8859-1"))) {lines.add(line);}
         String filePath = lines.get(lines.size() - 1);
-        removeLastLine("paths.txt");
         System.out.println(filePath + " is being processed.");
         File cfg = new File("json_iso8601.bro"); 
         

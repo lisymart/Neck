@@ -18,7 +18,7 @@ public class PathsController {
     	ArrayList<String> running = new ArrayList<String>();
         PrintWriter writerSh = new PrintWriter("scriptTest.sh", "UTF-8");     
         writerSh.println("#!/bin/sh ");
-        writerSh.println("bro -version");
+        writerSh.println("broctl status");
         writerSh.close();
         File broOutput = new File("broOutput.txt");
         ProcessBuilder pb = new ProcessBuilder("/bin/bash", "scriptTest.sh");
@@ -54,7 +54,7 @@ public class PathsController {
         
         writerSh = new PrintWriter("scriptTest.sh", "UTF-8");     
         writerSh.println("#!/bin/sh ");
-        writerSh.println("hadoop version");
+        writerSh.println("tachyon version");
         writerSh.close();
         File hadoopOutput = new File("hadoopOutput.txt");
         pb = new ProcessBuilder("/bin/bash", "scriptTest.sh");
@@ -73,7 +73,7 @@ public class PathsController {
         if (broLines.size() != 0){
         	List<String> broProof = new ArrayList<>();
         	for (String line : broLines.get(0).split(" ")) {broProof.add(line);}
-        	if (broProof.get(0).equals("bro")){
+        	if (broProof.get(0).equals("Getting")){
         		running.add("bro");
         	}
         }
@@ -89,8 +89,8 @@ public class PathsController {
         if (hadoopLines.size() != 0){
         	List<String> hadoopProof = new ArrayList<>();
         	for (String line : hadoopLines.get(0).split(" ")) {hadoopProof.add(line);}
-        	if (hadoopProof.get(0).equals("Hadoop")){
-        		running.add("hadoop");
+        	if (hadoopProof.get(0).equals("Tachyon") || hadoopProof.get(0).equals("Java")){
+        		running.add("tachyon");
         	}
         }
         

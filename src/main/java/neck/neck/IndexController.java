@@ -15,13 +15,14 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.servlet.ModelAndView;
 
 @Controller
 public class IndexController {
     private static File paths = new File("paths.txt");
 
     @RequestMapping(value = "/index", method = RequestMethod.POST)
-    public String index(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    public ModelAndView index(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
     	String message = "";
     	String line = null;
         try{
@@ -34,7 +35,7 @@ public class IndexController {
         }        
     	if (line == null) message += "Elasticsearch is not running. Start ES and try again.<br>";
        
-        if (paths.exists()) { if (line != null) return "loadFile"; else {request.setAttribute("message", message); return "index";}}
+        if (paths.exists()) { if (line != null) return new ModelAndView("loadFile"); else return new ModelAndView("index", "message", message);}
        	else {
        		
     	PathsController pc = new PathsController();
@@ -42,15 +43,14 @@ public class IndexController {
         if (check.size() < 3){
         	if (!check.contains("bro")) message += "Bro is not installed or properly set.<br>";
         	if (!check.contains("logstash")) message += "Logstash is not installed or properly set.<br>";
-        	if (!check.contains("hadoop")) message += "Hadoop is not installed or properly set.<br>";
+        	if (!check.contains("tachhyon")) message += "Tachyon is not installed or properly set.<br>";
         	message += "Check your .bashrc for path variables."; 
         }       
         if (! message.equals("")) {
-        	request.setAttribute("message",	message);
-        	return "index";
+        	return new ModelAndView("index", "message", message);
         } else {    
         	paths.createNewFile();
-        	return "loadFile";
+        	return new ModelAndView("loadFile");
         }
     }
     }
