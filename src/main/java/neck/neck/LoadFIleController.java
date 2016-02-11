@@ -1,7 +1,9 @@
 package neck.neck;
 
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
@@ -32,13 +34,19 @@ public class LoadFIleController {
     @ResponseBody    
     @RequestMapping(value = "/loadFile", method = RequestMethod.POST)
     public ModelAndView loadFile(@RequestParam String nameOfFile, @RequestParam MultipartFile fileToUpload) throws ServletException, IOException {
-        
-        File file = new File(nameOfFile);
+    	String fileName = nameOfFile;
+    	if (fileName.equals("")) fileName = fileToUpload.getOriginalFilename();
+    	
+    	BufferedOutputStream stream = new BufferedOutputStream(new FileOutputStream(new File(fileName)));
+    	stream.write(fileToUpload.getBytes());
+    	stream.close();
+    		
+        File file = new File(fileName);
         
         if(file.exists() && !file.isDirectory()){
-            Files.write(Paths.get("paths.txt"), (nameOfFile + "\n").getBytes(), StandardOpenOption.APPEND);
+            Files.write(Paths.get("paths.txt"), (file.getAbsolutePath() + "\n").getBytes(), StandardOpenOption.APPEND);
         
-        String[] filetype = nameOfFile.split("\\.");               
+        String[] filetype = fileName.split("\\.");               
         switch (filetype[1]) {
             case "pcap" : 
                 System.out.println("pcap"); 
