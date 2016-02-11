@@ -8,7 +8,6 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <meta http-equiv="refresh" content="5" />
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <link href="${pageContext.request.contextPath}/resources/styles.css" rel="stylesheet" type="text/css"/>
         <title> Neck </title>

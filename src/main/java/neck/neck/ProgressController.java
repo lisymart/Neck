@@ -27,7 +27,7 @@ public class ProgressController {
         if (lps.getProgress() == 0) {progress =  "File is being processed by Bro network controller...";}
         if (lps.getProgress() > 0 ) {progress =  "File is being Logstashed. [" + lps.getProgress() + " / " + lps.getNumberOfFiles() + "] -- " +  lps.getProcessedFile();}
         if (lps.getProgress() < 0 ) {progress =  "Your file is not being processed. There must have an error occured.";}
-        if (lps.getProgress() > lps.getNumberOfFiles()) {return new ModelAndView("succcess");}
+        if (lps.getProgress() > lps.getNumberOfFiles()) {return new ModelAndView("success");}
         return new ModelAndView("progress", "progress", progress);
     }
     
