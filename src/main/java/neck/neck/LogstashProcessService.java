@@ -69,9 +69,4 @@ public class LogstashProcessService{
         System.out.println("Finished");
         return "progress";
     }
-    
-    
-    
-    
-
 }

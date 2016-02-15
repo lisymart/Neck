@@ -60,7 +60,6 @@ public class LogConfig {
         }
         writerSh.println("ruby {code => \"event.to_hash.keys.each { |k| event[ k.sub('.','-') ] = event.remove(k) if k.include?'.' }\"} }");
         writerSh.println("output { elasticsearch { hosts => [\"localhost:9200\"] }");
-        writerSh.println("stdout { codec => rubydebug }");
         writerSh.println("}");
         writerSh.close();
 

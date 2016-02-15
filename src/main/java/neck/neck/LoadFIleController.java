@@ -5,6 +5,8 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -33,15 +35,23 @@ public class LoadFIleController {
 
     @ResponseBody    
     @RequestMapping(value = "/loadFile", method = RequestMethod.POST)
-    public ModelAndView loadFile(@RequestParam String nameOfFile, @RequestParam MultipartFile fileToUpload) throws ServletException, IOException {
+    public ModelAndView loadFile(@RequestParam String nameOfFile, @RequestParam MultipartFile fileToUpload) throws IOException, URISyntaxException, ServletException{
     	String fileName = nameOfFile;
     	if (fileName.equals("")) fileName = fileToUpload.getOriginalFilename();
     	
-    	BufferedOutputStream stream = new BufferedOutputStream(new FileOutputStream(new File(fileName)));
+        /*Configuration conf = new Configuration();
+        FileSystem hdfs = FileSystem.get( new URI( "hdfs://localhost" ), conf );
+        Path path = new Path("hdfs://localhost/"+fileName);
+        if ( hdfs.exists( path )) return new ModelAndView("loadFIle", "message", "File with given name alredy exists. Please rename.");*/
+        
+        BufferedOutputStream stream = new BufferedOutputStream(new FileOutputStream(new File(fileName)));
     	stream.write(fileToUpload.getBytes());
     	stream.close();
-    		
+        
+        
         File file = new File(fileName);
+        
+        //hdfs.copyFromLocalFile(new Path(file.getAbsolutePath()), path);
         
         if(file.exists() && !file.isDirectory()){
             Files.write(Paths.get("paths.txt"), (file.getAbsolutePath() + "\n").getBytes(), StandardOpenOption.APPEND);
