@@ -38,8 +38,8 @@ public class LoadFIleController {
     public ModelAndView loadFile(@RequestParam String nameOfFile, @RequestParam MultipartFile fileToUpload) throws IOException, URISyntaxException, ServletException{
     	String fileName = nameOfFile;
     	if (fileName.equals("")) fileName = fileToUpload.getOriginalFilename();
-    	
-        /*Configuration conf = new Configuration();
+
+    	/*Configuration conf = new Configuration();
         FileSystem hdfs = FileSystem.get( new URI( "hdfs://localhost" ), conf );
         Path path = new Path("hdfs://localhost/"+fileName);
         if ( hdfs.exists( path )) return new ModelAndView("loadFIle", "message", "File with given name alredy exists. Please rename.");*/
