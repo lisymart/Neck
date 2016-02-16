@@ -14,7 +14,7 @@
 <br>
 <a> Through this app you can upload log files to Elasticsearch. </a>
 <br>
-<a> Applications Logstash, Bro and Hadoop are necessary to be installed to use this app. </a>
+<a> Applications Logstash and Bro are necessary to be installed to use this app. </a>
 <br>
 <a> First run may last longer due to several installations check. </a>
 <br>

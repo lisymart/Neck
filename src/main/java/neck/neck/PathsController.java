@@ -51,25 +51,7 @@ public class PathsController {
         file.delete();
         List<String> logstashLines = new ArrayList<>();
         for (String line : Files.readAllLines(Paths.get("logstashOutput.txt"), Charset.forName("ISO-8859-1"))) {logstashLines.add(line);}
-        
-        writerSh = new PrintWriter("scriptTest.sh", "UTF-8");     
-        writerSh.println("#!/bin/sh ");
-        writerSh.println("tachyon version");
-        writerSh.close();
-        File hadoopOutput = new File("hadoopOutput.txt");
-        pb = new ProcessBuilder("/bin/bash", "scriptTest.sh");
-        pb.redirectOutput(hadoopOutput);
-        p = pb.start();
-        try {
-            p.waitFor();
-        } catch (InterruptedException ex) {
-            Logger.getLogger(PathsController.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        file = new File("scriptTest.sh");
-        file.delete();
-        List<String> hadoopLines = new ArrayList<>();
-        for (String line : Files.readAllLines(Paths.get("hadoopOutput.txt"), Charset.forName("ISO-8859-1"))) {hadoopLines.add(line);}
-        
+       
         if (broLines.size() != 0){
         	List<String> broProof = new ArrayList<>();
         	for (String line : broLines.get(0).split(" ")) {broProof.add(line);}
@@ -86,14 +68,6 @@ public class PathsController {
         	}
         }
         
-        if (hadoopLines.size() != 0){
-        	List<String> hadoopProof = new ArrayList<>();
-        	for (String line : hadoopLines.get(0).split(" ")) {hadoopProof.add(line);}
-        	if (hadoopProof.get(0).equals("Tachyon") || hadoopProof.get(0).equals("Java")){
-        		running.add("tachyon");
-        	}
-        }
-        
         PrintWriter writer = new PrintWriter("json_iso8601.bro");
         writer.println("@load policy/tuning/json-logs");
         writer.println("redef LogAscii::json_timestamps = JSON::TS_ISO8601;");
@@ -102,8 +76,6 @@ public class PathsController {
         file = new File("broOutput.txt");
         file.delete();
         file = new File("logstashOutput.txt");
-        file.delete();
-        file = new File("hadoopOutput.txt");
         file.delete();
         
         return running; 

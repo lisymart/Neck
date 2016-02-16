@@ -5,18 +5,16 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.TreeSet;
 import javax.servlet.ServletException;
 import org.springframework.stereotype.Controller;
@@ -29,78 +27,80 @@ import org.springframework.web.servlet.ModelAndView;
 
 @Controller
 public class LoadFIleController {
-    
-    BroProcessService bps = new BroProcessService();
-        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss");
+    private ArrayList<String> fileNames = new ArrayList<>();
 
     @ResponseBody    
     @RequestMapping(value = "/loadFile", method = RequestMethod.POST)
-    public ModelAndView loadFile(@RequestParam String nameOfFile, @RequestParam MultipartFile fileToUpload) throws IOException, URISyntaxException, ServletException{
-    	String fileName = nameOfFile;
-    	if (fileName.equals("")) fileName = fileToUpload.getOriginalFilename();
-
-    	/*Configuration conf = new Configuration();
-        FileSystem hdfs = FileSystem.get( new URI( "hdfs://localhost" ), conf );
-        Path path = new Path("hdfs://localhost/"+fileName);
-        if ( hdfs.exists( path )) return new ModelAndView("loadFIle", "message", "File with given name alredy exists. Please rename.");*/
+    public ModelAndView loadFile(@RequestParam MultipartFile[] filesToUpload) throws IOException, URISyntaxException, ServletException{
+    	Set<String> filetypes = new HashSet<>();
+    	String filetype = null;;
+    	for (MultipartFile file: filesToUpload){
+    		String name = file.getOriginalFilename();
+    		String[] type = name.split("\\.");
+    		filetype = type[type.length-1];
+    		filetypes.add(filetype);
+    	}
+    	if (filetypes.size() > 1) return new ModelAndView("loadFile", "message", "You selected files with different types. Only one type is allowed.");
+    	
+    	File uploads = new File("data/uploads");
+    	if (!uploads.exists()) uploads.mkdirs();
+    	
+    	for (MultipartFile file : filesToUpload){
+    		fileNames.add(file.getOriginalFilename());
+    		BufferedOutputStream stream = new BufferedOutputStream(new FileOutputStream(new File("data/uploads/" + file.getOriginalFilename())));
+        	stream.write(file.getBytes());
+        	stream.close();
+    	}
         
-        BufferedOutputStream stream = new BufferedOutputStream(new FileOutputStream(new File(fileName)));
-    	stream.write(fileToUpload.getBytes());
-    	stream.close();
-        
-        
-        File file = new File(fileName);
-        
-        //hdfs.copyFromLocalFile(new Path(file.getAbsolutePath()), path);
-        
-        if(file.exists() && !file.isDirectory()){
+        for (String fileName : fileNames){
+        	File file = new File ("data/uploads/" + fileName);
+        if(file.exists() && !file.isDirectory())
             Files.write(Paths.get("paths.txt"), (file.getAbsolutePath() + "\n").getBytes(), StandardOpenOption.APPEND);
+        }
+              
         
-        String[] filetype = fileName.split("\\.");               
-        switch (filetype[1]) {
+        switch (filetype) {
             case "pcap" : 
                 System.out.println("pcap"); 
-                bps.broProcess();
+                for (String filePath : fileNames){
+                    BroProcessService bps = new BroProcessService();
+                    bps.broProcess(filePath);
+                }
                 return new ModelAndView("pcap", "attributesList", showAttributes());
             case "csv" :
                 System.out.println("csv");
                 return new ModelAndView("csv");
-            case "log" :
-                System.out.println("log");
-                return new ModelAndView("log");
-    }
-        } else {
-            return new ModelAndView("loadFile", "message", "Path to file is incorrect. Try again.");
         }
-        return new ModelAndView("loadFile");
+        return new ModelAndView("loadFile", "message", "Something went wrong, please try again.");
     }   
     
     
 
     public TreeSet<String> showAttributes() throws ServletException, IOException {
-        final Date date = bps.getDate();
         TreeSet<String> attributes = new TreeSet<String>();
-        File folder = new File(dateFormat.format(date)); 
-        List<File> list = Arrays.asList(folder.listFiles());        
-        for (File f : list) {
-        	BufferedReader br = Files.newBufferedReader(f.toPath(), Charset.forName("ISO-8859-1")); 
-        	String line = br.readLine();   	
-        	int i = 0;
-        	while (line != null && i<=1000) {        		        		
-        		ArrayList<String> names = new ArrayList<>();
-        		List<String> temp = Arrays.asList(line.split("\":"));
-        		for (String s: temp){
-        			List<String> temp2 = Arrays.asList(s.split(","));
-        			names.add(temp2.get(temp2.size()-1));            	
+        for (String fileName : fileNames){
+        	File folder = new File("data/pendings/" + fileName); 
+        	List<File> list = Arrays.asList(folder.listFiles());        
+        	for (File f : list) {
+        		BufferedReader br = Files.newBufferedReader(f.toPath(), Charset.forName("ISO-8859-1")); 
+        		String line = br.readLine();   	
+        		int i = 0;
+        		while (line != null && i<=1000) {        		        		
+        			ArrayList<String> names = new ArrayList<>();
+        			List<String> temp = Arrays.asList(line.split("\":"));
+        			for (String s: temp){
+        				List<String> temp2 = Arrays.asList(s.split(","));
+        				names.add(temp2.get(temp2.size()-1));            	
+        			}
+        			names.remove(names.size()-1);
+        			ArrayList<String> names2 = new ArrayList<>();
+        			for (String s : names){
+        				names2.add(s.split("\"")[1]);
+        			}
+        			attributes.addAll(names2); 
+        			line = br.readLine();        		
+        			i++;
         		}
-        		names.remove(names.size()-1);
-        		ArrayList<String> names2 = new ArrayList<>();
-        		for (String s : names){
-        			names2.add(s.split("\"")[1]);
-        		}
-        		attributes.addAll(names2); 
-        		line = br.readLine();        		
-        		i++;
         	}
         }
         return attributes;        

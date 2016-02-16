@@ -43,7 +43,6 @@ public class IndexController {
         if (check.size() < 3){
         	if (!check.contains("bro")) message += "Bro is not installed or properly set.<br>";
         	if (!check.contains("logstash")) message += "Logstash is not installed or properly set.<br>";
-        	if (!check.contains("tachhyon")) message += "Tachyon is not installed or properly set.<br>";
         	message += "Check your .bashrc for path variables."; 
         }       
         if (! message.equals("")) {
