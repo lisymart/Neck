@@ -16,7 +16,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.concurrent.Future;
+
 import javax.servlet.ServletException;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -26,18 +32,23 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 @Controller
+@SpringBootApplication
+@EnableAsync
 public class LoadFIleController {
+	@Autowired
+    BroProcessService bps;
+
     private ArrayList<String> fileNames = new ArrayList<>();
 
     @ResponseBody    
     @RequestMapping(value = "/loadFile", method = RequestMethod.POST)
-    public ModelAndView loadFile(@RequestParam MultipartFile[] filesToUpload) throws IOException, URISyntaxException, ServletException{
+    public ModelAndView loadFile(@RequestParam MultipartFile[] filesToUpload) throws IOException, URISyntaxException, ServletException, InterruptedException{
+    	System.out.println(Thread.currentThread().getName());
     	Set<String> filetypes = new HashSet<>();
     	String filetype = null;;
     	for (MultipartFile file: filesToUpload){
     		String name = file.getOriginalFilename();
-    		String[] type = name.split("\\.");
-    		filetype = type[type.length-1];
+    		filetype = name.substring(name.lastIndexOf(".") + 1);
     		filetypes.add(filetype);
     	}
     	if (filetypes.size() > 1) return new ModelAndView("loadFile", "message", "You selected files with different types. Only one type is allowed.");
@@ -62,11 +73,27 @@ public class LoadFIleController {
         switch (filetype) {
             case "pcap" : 
                 System.out.println("pcap"); 
+                List<Future<String>> results = new ArrayList<>();
                 for (String filePath : fileNames){
-                    BroProcessService bps = new BroProcessService();
-                    bps.broProcess(filePath);
+                    results.add(bps.broProcess(filePath));
                 }
-                return new ModelAndView("pcap", "attributesList", showAttributes());
+                boolean test = false;
+                while (!test){
+                	test = true;
+                	for (Future<String> wait : results){
+                		if (wait.isDone()) test &= true;
+                		else test &= false;
+                	}
+                	Thread.sleep(100);
+                }
+                TreeSet<String> renaming = showAttributes();
+                for (String name : fileNames){
+                	File file = new File ("data/uploads/" + name);
+                	file.delete();
+                }
+                fileNames.clear();
+                
+                return new ModelAndView("pcap", "attributesList", renaming);
             case "csv" :
                 System.out.println("csv");
                 return new ModelAndView("csv");

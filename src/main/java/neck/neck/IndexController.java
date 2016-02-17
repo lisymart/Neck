@@ -40,7 +40,7 @@ public class IndexController {
        		
     	PathsController pc = new PathsController();
     	ArrayList<String> check =  pc.checkInstallations();
-        if (check.size() < 3){
+        if (check.size() < 2){
         	if (!check.contains("bro")) message += "Bro is not installed or properly set.<br>";
         	if (!check.contains("logstash")) message += "Logstash is not installed or properly set.<br>";
         	message += "Check your .bashrc for path variables."; 

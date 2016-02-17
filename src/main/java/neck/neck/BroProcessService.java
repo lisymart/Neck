@@ -9,7 +9,11 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Date;
+import java.util.concurrent.Future;
 import java.util.logging.Level;
+
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -22,9 +26,9 @@ public class BroProcessService {
     public Date getDate() {
         return date;
     }
-       
-    public String broProcess(String filePath) throws IOException{
-        System.out.println(filePath + " is being processed by Bro.");
+    @Async   
+    public Future<String> broProcess(String filePath) throws IOException{
+        System.out.println("[" + Thread.currentThread().getName() + "] - " + filePath + " is being processed by Bro.");
         File cfg = new File("json_iso8601.bro"); 
         File pendings = new File("data/pendings");
         if (!pendings.exists()) pendings.mkdirs();
@@ -62,6 +66,7 @@ public class BroProcessService {
         } catch (Exception ex) {
             java.util.logging.Logger.getLogger(PcapController.class.getName()).log(Level.SEVERE, null, ex);
         }
-        return filePath;
+        System.out.println("[" + Thread.currentThread().getName() + "] - " + filePath + " ~ done.");
+        return new AsyncResult<String>(filePath);
     }
 }
