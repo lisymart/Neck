@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.TreeSet;
 import java.util.concurrent.Future;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -62,6 +61,11 @@ public class PcapController {
         	Thread.sleep(100);
         }
         for (String name : fileNames){
+        	File folder = new File("data/pendings/" + name);
+        	for (File fileName : folder.listFiles()){        
+        		File file = new File (fileName.getAbsolutePath());
+        		file.delete();
+        	}
         	File file = new File("data/pendings/" + name);
         	file.delete();
         }

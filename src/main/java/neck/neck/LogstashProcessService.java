@@ -38,8 +38,6 @@ public class LogstashProcessService{
         	}
         	File file = new File("script" + renaming + ".sh");
         	file.delete();
-        	file = new File(fileName.getAbsolutePath());
-        	file.delete();
         }   
         System.out.println("[" + Thread.currentThread().getName() + "] - " + fileName.getAbsolutePath() + " ~ done.");
         return new AsyncResult<String>("progress");
