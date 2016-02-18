@@ -11,13 +11,14 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 @Configuration
 @EnableAsync
 public class NeckConfiguration implements AsyncConfigurer{
+	
 	@Override
     public Executor getAsyncExecutor() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-        executor.setCorePoolSize(10);
-        executor.setMaxPoolSize(50);
-        executor.setQueueCapacity(500);
-        executor.setThreadNamePrefix("Thread-");
+        executor.setCorePoolSize(20);
+        executor.setMaxPoolSize(100);
+        executor.setQueueCapacity(1000);
+        executor.setThreadNamePrefix("Thrd-");
         executor.initialize();
         return executor;
     }

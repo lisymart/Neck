@@ -12,8 +12,10 @@ import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.Future;
@@ -91,9 +93,14 @@ public class LoadFIleController {
                 	File file = new File ("data/uploads/" + name);
                 	file.delete();
                 }
+                Map <String, Object> model = new HashMap<>();
+                ArrayList<String> names = new ArrayList<>();
+                names.addAll(fileNames);
                 fileNames.clear();
+                model.put("fileNames", names);
+                model.put("attributesList", renaming);
                 
-                return new ModelAndView("pcap", "attributesList", renaming);
+                return new ModelAndView("pcap", model);
             case "csv" :
                 System.out.println("csv");
                 return new ModelAndView("csv");

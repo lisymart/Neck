@@ -13,6 +13,12 @@
 <h5> Here are selected attributes from the first 1000 lines of each log. You can change the name of attributes here: </h5>
 <br>
 <form action="/Neck/pcap" method="POST"> 
+<h5> Selected file(s): </h5>
+<c:forEach var="name" items="${fileNames}">
+<h5> ${name} </h5>
+<input type="hidden" name="${name}">
+</c:forEach>
+<br>
 <table class="table1">
 <tr>
 <td><b> Attribute orig name </b></td>
@@ -21,7 +27,7 @@
 <tr></tr>
 <c:forEach var="item" items="${attributesList}">
 <tr>
-<td> <c:out value="${item}"/> </td>
+<td> ${item} </td>
 <td> <input type="text" name="${item}"><br> </td>
 </tr> 
 </c:forEach>

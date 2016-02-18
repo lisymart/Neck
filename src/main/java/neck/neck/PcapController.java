@@ -6,8 +6,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.TreeSet;
 import java.util.concurrent.Future;
-
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,19 +27,27 @@ public class PcapController {
 	private LogstashProcessService lps;
    
     @RequestMapping(value = "/pcap", method = RequestMethod.POST)
-    public String process(HttpServletRequest request,@RequestParam final String addition) throws ServletException, IOException, InterruptedException {
-        Map<String, String[]> params = request.getParameterMap();
-        final TreeMap<String, String> change = new TreeMap<String, String>();
-
-        for (String attName : params.keySet()){
-        	change.put(attName, params.get(attName)[0]);
-        }
-        change.remove("addition");
+    	public String process(HttpServletRequest request,@RequestParam final String addition) 
+    			throws ServletException, IOException, InterruptedException {
+            Map<String, String[]> params = request.getParameterMap();
+            final TreeMap<String, String> change = new TreeMap<String, String>();
+            ArrayList<String> fileNames = new ArrayList<>();
+            
+            
+            for (String attName : params.keySet()){
+            	if (attName.endsWith(".pcap") || attName.endsWith(".csv") || attName.endsWith(".log")){
+            		fileNames.add(attName);
+            	} else {
+            		change.put(attName, params.get(attName)[0]);
+            	}
+            }
+            change.remove("addition");
         
         List<Future<String>> results = new ArrayList<>();
-        File folder = new File("data/pendings");
-        for (File folderName : folder.listFiles()){
-        	for (File fileName : new File(folderName.getAbsolutePath()).listFiles()){        
+        
+        for (String name : fileNames){
+        	File folder = new File("data/pendings/" + name);
+        	for (File fileName : folder.listFiles()){        
         		results.add(lps.process(fileName, change, addition));
         	}
         }
@@ -53,8 +61,8 @@ public class PcapController {
         	}
         	Thread.sleep(100);
         }
-        for (File folderName : folder.listFiles()){
-        	File file = new File(folderName.getAbsolutePath());
+        for (String name : fileNames){
+        	File file = new File("data/pendings/" + name);
         	file.delete();
         }
         
