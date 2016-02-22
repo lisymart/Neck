@@ -9,6 +9,7 @@
 </head>
 <body>
 	<div id="center">
+		<form action="/Neck/pcap" method="POST"> 
 		<h1> Neck </h1>
 		<h4> Here are selected attributes from the first 1000 lines of each log. You can modify them. </h4>
 		<c:forEach var="name" items="${fileNames}">
@@ -16,7 +17,6 @@
 			<input type="hidden" name="${name}">
 		</c:forEach>
 		<br><br>
-		<form action="/Neck/pcap" method="POST"> 
 			<input class="btn" name="rename" type="submit" value="Rename">
 			<br><br>
 			<div> Choose attributes to process: </div>

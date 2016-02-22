@@ -43,7 +43,7 @@ public class PcapController {
         	renaming.put(s, request.getParameter(s));
         }
         results = new ArrayList<>();
-        
+        System.out.println(renaming);
         for (String name : fileNames){
         	File folder = new File("data/pendings/" + name);
         	for (File fileName : folder.listFiles()){        
@@ -88,6 +88,7 @@ public class PcapController {
         model.put("fileNames", fileNames);
         model.put("renameList", rename);
         model.put("attributesList", params);
+        System.out.println(fileNames);
         return new ModelAndView("pcap", model);
     }
      
