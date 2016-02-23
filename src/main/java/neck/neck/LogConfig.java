@@ -4,57 +4,74 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
 import java.util.TreeMap;
+import java.util.TreeSet;
 
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 
-/**
- *
- * @author a
- */
 public class LogConfig {
     private File config;
 
 
-    public LogConfig(TreeMap<String, String> input, String addition) throws FileNotFoundException, UnsupportedEncodingException {
+    public LogConfig(String timeStamp, TreeMap<String, String> renaming, TreeSet<String> delete, TreeSet<String> uppercase, TreeSet<String> lowercase, String addition) 
+    		throws FileNotFoundException, UnsupportedEncodingException {
         PrintWriter writerSh = new PrintWriter("configFile.conf", "UTF-8");     
-        TreeMap <String, String> renameMap = new TreeMap<String, String>();
-        ArrayList <String> removeList = new ArrayList<String>();
-        
-        for (String key : input.keySet()){
-        	String value = input.get(key);
-        	if (value.equals("r")) {
-        		removeList.add(key);
-        	} else if (!value.isEmpty()) {
-        		renameMap.put(key, value);
-        	}
-        }        
-        
         writerSh.println("input { stdin {} }");
         writerSh.println("filter { ");
         writerSh.println("json {source => \"message\"}");
-        writerSh.println("date { match => [\"ts\", \"ISO8601\"] remove_field => [\"ts\"] }");
+        String[] ts = timeStamp.split("->");
+        writerSh.println("date { match => [\"" + ts[0] + "\", \"" + ts[1] + "\"] remove_field => [\"" + ts[0] + "\"] }");
         
-        if (!renameMap.isEmpty()) {
+        if (!renaming.isEmpty()) {
         	writerSh.println("mutate { ");
-        	for (String fieldName : renameMap.keySet()){
-        		writerSh.println("rename => {\"" + fieldName + "\" => \"" + renameMap.get(fieldName) +"\"} ");
+        	for (String fieldName : renaming.keySet()){
+        		writerSh.println("rename => {\"" + fieldName + "\" => \"" + renaming.get(fieldName) +"\"} ");
         	}
         	writerSh.println("}");
         	}
-        if (!removeList.isEmpty()){
-        	writerSh.println("mutate { ");
+        if (!delete.isEmpty()){
+        	writerSh.print("mutate { ");
         	writerSh.print("remove_field => [");
-        	for (int i = 0; i<removeList.size() - 1; i++){
-        		writerSh.print("\"" + removeList.get(i) + "\",");
+        	boolean isFirst = true;
+        	for (String s: delete){
+        		if (isFirst) {
+        			writerSh.print("\"" + s + "\"");
+        			isFirst = false;
+        		} else {
+        			writerSh.print(",\"" + s + "\"");
+        		}
         	}
-        	writerSh.println("\"" + removeList.get(removeList.size() - 1) + "\"]}");
+        	writerSh.println("]}");
         }
+        if(!uppercase.isEmpty()){
+        	writerSh.print("mutate { ");
+        	writerSh.print("uppercase => [");
+        	boolean isFirst = true;
+        	for (String s: uppercase){
+        		if (isFirst) {
+        			writerSh.print("\"" + s + "\"");
+        			isFirst = false;
+        		} else {
+        			writerSh.print(",\"" + s + "\"");
+        		}
+        	}
+        	writerSh.println("]}");
+        }
+        
+        if(!lowercase.isEmpty()){
+        	writerSh.print("mutate { ");
+        	writerSh.print("lowercase => [");
+        	boolean isFirst = true;
+        	for (String s: lowercase){
+        		if (isFirst) {
+        			writerSh.print("\"" + s + "\"");
+        			isFirst = false;
+        		} else {
+        			writerSh.print(",\"" + s + "\"");
+        		}
+        	}
+        	writerSh.println("]}");
+        }
+        
         if (addition != null){
         	writerSh.println(addition);
         }

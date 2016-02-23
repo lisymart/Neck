@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.TreeMap;
 import java.util.concurrent.Future;
 import java.util.logging.Level;
 import org.springframework.stereotype.Service;
@@ -18,9 +17,7 @@ public class LogstashProcessService{
     DateFormat hourFormat = new SimpleDateFormat("HH-mm-ss");
 
     @Async
-    public Future<String> process(File fileName, TreeMap<String, String> attributes, String addition) throws IOException, InterruptedException{
-        LogConfig conf = new LogConfig(attributes, addition);
-        String configuration = conf.getConfig().getAbsolutePath();
+    public Future<String> process(File fileName, String configuration) throws IOException, InterruptedException{
         String renaming = fileName.getAbsolutePath().replace("/", "-");
         if (fileName.getAbsolutePath().endsWith(".log")){   
         	System.out.println("[" + Thread.currentThread().getName() + "] - " + fileName.getAbsolutePath() + " is being logstashed.");

@@ -30,14 +30,17 @@ div.errorMessage {
 ul{
 	display: table; 
 	width: 100%;
+	vertical-align: middle;
 }
 li { 
 	display: inline-table; 
 	width: 25%;
+	height: 20px;
 	background: #d5ede3;
 	border: 3px solid #ffffff;
 	text-align: left;
-	padding: 3px;
+	vertical-align: middle;
+	padding: 2px;
 	font-size: 12px;
 }
 

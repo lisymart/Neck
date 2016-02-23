@@ -12,28 +12,70 @@
 		<form action="/Neck/pcap" method="POST"> 
 		<h1> Neck </h1>
 		<h4> Here are selected attributes from the first 1000 lines of each log. You can modify them. </h4>
+		<div class="errorMessage">${message}</div> 
 		<c:forEach var="name" items="${fileNames}">
 			<a>- ${name} -</a>
-			<input type="hidden" name="${name}">
+			<input type="hidden" name="fileNames" value="${name}">
 		</c:forEach>
 		<br><br>
-			<input class="btn" name="rename" type="submit" value="Rename">
+			<input class="btn" name="rnm" type="submit" value="Rename">
+			<input class="btn" name="dlt" type="submit" value="Delete">
+			<input class="btn" name="ts" type="submit" value="Timestamp">
+			<input class="btn" name="uc" type="submit" value="UpperCase">
+			<input class="btn" name="lc" type="submit" value="LowerCase">
 			<br><br>
 			<div> Choose attributes to process: </div>
 			<ul>	
 				<c:forEach var="item" items="${attributesList}">
 					<li> <input type="checkbox" name="checked" value="${item}"> ${item} </li>
-					<input type="hidden" name="attributes" value="${item}">
+					<input type="hidden" name="params" value="${item}">
 				</c:forEach>
 			</ul>
-			<br>
+			<c:if test="${not empty timeStamp}">
+			<input type="hidden" name="timeStamp" value="${timeStamp}">
+			<h4> This is the new Time Stamp --<b>  ${timeStamp}  </b>-- choose its format :
+				<select name="timeStampFormat">
+					<option value="ISO8601"> ISO8601 </option>
+					<!-- <option value="YYYY/MM/dd HH:mm:ss"> 2015/04/14 09:32:01 </option>
+					<option value="dd.MM.YYYY HH:mm:ss"> 14.04.2015 09:32:01</option>
+					<option value="YYYY MMM dd HH:mm:ss"> 2015 Apr 17 09:32:01 </option> -->
+				</select>
+			</h4>
+			</c:if>
+			<c:if test="${not empty renameList}">
 			<h4> Renaming: </h4>
 			<table class="table1">
-			<tr><td> Original name </td><td> Your name </td></tr>	
+			<tr><td><b> Original name </b></td><td><b> Your name </b></td></tr>	
 				<c:forEach var="item" items="${renameList}">
 					<tr> <td>${item}</td> <td> <input type="text" name="${item}"></td> </tr>
+					<input type="hidden" name="rename" value="${item}">
 				</c:forEach>
 			</table>
+			</c:if>
+			<c:if test="${not empty deleteList}">
+			<h4> Removing: </h4>
+			<ul>
+				<c:forEach var="item" items="${deleteList}">
+					<li>	${item} <input type="hidden" name="delete" value="${item}"> </li>
+				</c:forEach>
+			</ul>
+			</c:if>
+			<c:if test="${not empty uppercaseList}">
+			<h4> UpperCase: </h4>
+			<ul>
+				<c:forEach var="item" items="${uppercaseList}">
+					<li>	${item} <input type="hidden" name="uppercase" value="${item}"> </li>
+				</c:forEach>
+			</ul>
+			</c:if>
+			<c:if test="${not empty lowercaseList}">
+			<h4> LowerCase: </h4>
+			<ul>
+				<c:forEach var="item" items="${lowercaseList}">
+					<li>	${item} <input type="hidden" name="lowercase" value="${item}"> </li>
+				</c:forEach>
+			</ul>
+			</c:if>
 			<h5> And here you can add any other logstash configuration. Please use the whole filter configuration e.g.:  </h5>
 			<i> mutate{rename => {"fieldName" => "newName"}} </i>
 			<br>
