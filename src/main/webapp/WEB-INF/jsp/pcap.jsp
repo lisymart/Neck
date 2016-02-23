@@ -11,29 +11,37 @@
 	<div id="center">
 		<form action="/Neck/pcap" method="POST"> 
 		<h1> Neck </h1>
-		<h4> Here are selected attributes from the first 1000 lines of each log. You can modify them. </h4>
+		<div> Here are selected attributes from the first 1000 lines of each log. You can modify them. </div>
 		<div class="errorMessage">${message}</div> 
+		<a> File(s): </a> 
 		<c:forEach var="name" items="${fileNames}">
 			<a>- ${name} -</a>
 			<input type="hidden" name="fileNames" value="${name}">
 		</c:forEach>
-		<br><br>
+		<br>
+			<div> Choose attributes and action: </div>
+			<br>
+			<div>
 			<input class="btn" name="rnm" type="submit" value="Rename">
 			<input class="btn" name="dlt" type="submit" value="Delete">
-			<input class="btn" name="ts" type="submit" value="Timestamp">
+			<input class="btn" name="ts" type="submit" value="TimeStamp">
 			<input class="btn" name="uc" type="submit" value="UpperCase">
 			<input class="btn" name="lc" type="submit" value="LowerCase">
-			<br><br>
-			<div> Choose attributes to process: </div>
 			<ul>	
 				<c:forEach var="item" items="${attributesList}">
 					<li> <input type="checkbox" name="checked" value="${item}"> ${item} </li>
 					<input type="hidden" name="params" value="${item}">
 				</c:forEach>
 			</ul>
+			<input class="btn" name="rnm" type="submit" value="Rename">
+			<input class="btn" name="dlt" type="submit" value="Delete">
+			<input class="btn" name="ts" type="submit" value="TimeStamp">
+			<input class="btn" name="uc" type="submit" value="UpperCase">
+			<input class="btn" name="lc" type="submit" value="LowerCase">
+			</div>
 			<c:if test="${not empty timeStamp}">
 			<input type="hidden" name="timeStamp" value="${timeStamp}">
-			<h4> This is the new Time Stamp --<b>  ${timeStamp}  </b>-- choose its format :
+			<h4> Time Stamp is now --<b>  ${timeStamp}  </b>-- field. Choose its format :
 				<select name="timeStampFormat">
 					<option value="ISO8601"> ISO8601 </option>
 					<!-- <option value="YYYY/MM/dd HH:mm:ss"> 2015/04/14 09:32:01 </option>
@@ -76,9 +84,9 @@
 				</c:forEach>
 			</ul>
 			</c:if>
-			<h5> And here you can add any other logstash configuration. Please use the whole filter configuration e.g.:  </h5>
-			<i> mutate{rename => {"fieldName" => "newName"}} </i>
+			<a> And here you can add any other logstash configuration. <br> Please use the whole filter configuration e.g.:  </a>
 			<br>
+			<i> mutate{rename => {"fieldName" => "newName"}} </i>
 			<br>
 			<textarea class="addition" name="addition" rows=10>
 			</textarea>

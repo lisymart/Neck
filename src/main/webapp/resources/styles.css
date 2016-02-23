@@ -1,13 +1,14 @@
 table.table1 {    
-    text-align: center;
-    height: 200px;
-    width: 100%;
+	margin:0 auto;
+    width: 75%;
 }
 th, td {
     border-bottom: 1px solid #ddd;
 }
 #center { 
-    text-align:center; margin: 0 auto; width:960px;
+    text-align:center; 
+    margin: 0 auto; 
+    width:75%;
     } 
 body {
     background-image: url("neckr.png"), url("neckl.png");
@@ -19,7 +20,7 @@ body {
     text-align:center;
 }
 .addition{
-	width: 100%;
+	width: 60%;
 }
 div.errorMessage {
     text-align:center;
@@ -31,6 +32,8 @@ ul{
 	display: table; 
 	width: 100%;
 	vertical-align: middle;
+	margin: 0 6%;
+	text-align: left;
 }
 li { 
 	display: inline-table; 
@@ -38,7 +41,6 @@ li {
 	height: 20px;
 	background: #d5ede3;
 	border: 3px solid #ffffff;
-	text-align: left;
 	vertical-align: middle;
 	padding: 2px;
 	font-size: 12px;
@@ -52,12 +54,15 @@ li {
 	background:-ms-linear-gradient(top, #44c767 5%, #5cbf2a 100%);
 	background:linear-gradient(to bottom, #44c767 5%, #5cbf2a 100%);
 	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#44c767', endColorstr='#5cbf2a',GradientType=0);
+	-webkit-border-radius: 5;
+  	-moz-border-radius: 5;
+  	border-radius: 5px;
 	background-color:#44c767;
 	display:inline-block;
 	cursor:pointer;
 	color:#ffffff;
 	font-family:Arial;
-	font-size:20px;
+	font-size:12px;
 	font-weight:bold;
 	padding:8px 20px;
 	text-decoration:none;
