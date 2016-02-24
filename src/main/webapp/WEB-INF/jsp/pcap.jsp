@@ -27,6 +27,7 @@
 			<input class="btn" name="ts" type="submit" value="TimeStamp">
 			<input class="btn" name="uc" type="submit" value="UpperCase">
 			<input class="btn" name="lc" type="submit" value="LowerCase">
+			<input class="btn" name="annm" type="submit" value="Anonymize">
 			<ul>	
 				<c:forEach var="item" items="${attributesList}">
 					<li> <input type="checkbox" name="checked" value="${item}"> ${item} </li>
@@ -38,6 +39,7 @@
 			<input class="btn" name="ts" type="submit" value="TimeStamp">
 			<input class="btn" name="uc" type="submit" value="UpperCase">
 			<input class="btn" name="lc" type="submit" value="LowerCase">
+			<input class="btn" name="annm" type="submit" value="Anonymize">
 			</div>
 			<c:if test="${not empty timeStamp}">
 			<input type="hidden" name="timeStamp" value="${timeStamp}">
@@ -81,6 +83,22 @@
 			<ul>
 				<c:forEach var="item" items="${lowercaseList}">
 					<li>	${item} <input type="hidden" name="lowercase" value="${item}"> </li>
+				</c:forEach>
+			</ul>
+			</c:if>
+			<c:if test="${not empty anonymList}">
+			<h4> Anonymize: (Choose algorithm: 
+			<select name="annmAlgo"> 
+					<option value="SHA1"> SHA1 </option>
+					<option value="SHA256"> SHA256 </option>
+					<option value="SHA384"> SHA384 </option>
+					<option value="SHA512"> SHA512 </option>
+					<option value="MD5"> MD5 </option>
+			</select>
+			)</h4>
+			<ul>
+				<c:forEach var="item" items="${anonymList}">
+					<li>	${item} <input type="hidden" name="anonym" value="${item}"> </li>
 				</c:forEach>
 			</ul>
 			</c:if>

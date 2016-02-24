@@ -12,8 +12,8 @@ public class LogConfig {
     private File config;
 
 
-    public LogConfig(String timeStamp, TreeMap<String, String> renaming, TreeSet<String> delete, TreeSet<String> uppercase, TreeSet<String> lowercase, String addition) 
-    		throws FileNotFoundException, UnsupportedEncodingException {
+    public LogConfig(String timeStamp, TreeMap<String, String> renaming, TreeSet<String> delete, TreeSet<String> uppercase, 
+    		TreeSet<String> lowercase, TreeSet<String> anonymize, String annmAlgo, String addition) throws FileNotFoundException, UnsupportedEncodingException {
         PrintWriter writerSh = new PrintWriter("configFile.conf", "UTF-8");     
         writerSh.println("input { stdin {} }");
         writerSh.println("filter { ");
@@ -70,6 +70,31 @@ public class LogConfig {
         		}
         	}
         	writerSh.println("]}");
+        }
+        if (!anonymize.isEmpty()) {
+        	writerSh.println("mutate { ");
+        	for (String fieldName : anonymize){
+        		writerSh.println("convert => {\"" + fieldName + "\" => \"string\"} ");
+        	}
+        	writerSh.println("}");
+        }
+        
+        if(!anonymize.isEmpty()){
+        	writerSh.println("anonymize { ");
+        	writerSh.println("algorithm => \"" + annmAlgo + "\"");
+        	writerSh.println("fields => [");
+        	boolean isFirst = true;
+        	for (String s: anonymize){
+        		if (isFirst) {
+        			writerSh.print("\"" + s + "\"");
+        			isFirst = false;
+        		} else {
+        			writerSh.print(",\"" + s + "\"");
+        		}
+        	}
+        	writerSh.println("]");
+        	writerSh.println("key => \"ThisIsMyHashingKey\"");
+        	writerSh.println("}");
         }
         
         if (addition != null){
