@@ -152,7 +152,7 @@ public class LoadFIleController {
                 
                 return new ModelAndView("showOptions", model);
         }
-        return new ModelAndView("loadFile", "message", "Something went wrong, please try again.");
+        return new ModelAndView("loadFile", "message", "Unsupported file type.");
     }   
     
     @RequestMapping(value = "/loadFile", method = RequestMethod.POST, params="chooseFile")
