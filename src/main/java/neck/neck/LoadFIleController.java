@@ -62,6 +62,7 @@ public class LoadFIleController {
     		for (String s: checked){
     			fileNames.add(s);
     		}
+    		filetypes.clear();
     		for (String s: fileNames){
     			filetype = s.substring(s.lastIndexOf(".") + 1);
     			filetypes.add(filetype);
