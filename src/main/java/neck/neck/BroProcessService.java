@@ -11,7 +11,6 @@ import java.io.PrintWriter;
 import java.util.Date;
 import java.util.concurrent.Future;
 import java.util.logging.Level;
-
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.stereotype.Service;
@@ -51,21 +50,12 @@ public class BroProcessService {
         try {   
             p.waitFor();
         } catch (InterruptedException ex) {
-            java.util.logging.Logger.getLogger(PcapController.class.getName()).log(Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(ShowOptionsController.class.getName()).log(Level.SEVERE, null, ex);
         }
         
         File file = new File("script" + filePath +".sh");
         file.delete();
-            
-        File folder = new File("data/zips");
-        if (!folder.exists()) folder.mkdirs();
         
-        FolderZipper zipper = new FolderZipper();
-        try {
-            zipper.zipFolder("data/pendings/" + filePath, "data/zips/" + filePath + ".zip" );
-        } catch (Exception ex) {
-            java.util.logging.Logger.getLogger(PcapController.class.getName()).log(Level.SEVERE, null, ex);
-        }
         System.out.println("[" + Thread.currentThread().getName() + "] - " + filePath + " ~ done.");
         return new AsyncResult<String>(filePath);
     }

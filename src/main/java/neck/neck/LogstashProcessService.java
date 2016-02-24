@@ -31,7 +31,7 @@ public class LogstashProcessService{
         	try {   
         		p.waitFor();
         	} catch (InterruptedException ex) {
-        		java.util.logging.Logger.getLogger(PcapController.class.getName()).log(Level.SEVERE, null, ex);
+        		java.util.logging.Logger.getLogger(ShowOptionsController.class.getName()).log(Level.SEVERE, null, ex);
         	}
         	File file = new File("script" + renaming + ".sh");
         	file.delete();

@@ -8,7 +8,7 @@ th, td {
 #center { 
     text-align:center; 
     margin: 0 auto; 
-    width:75%;
+    width:60%;
     } 
 body {
     background-image: url("neckr.png"), url("neckl.png");
@@ -23,27 +23,38 @@ body {
 	width: 60%;
 }
 div.errorMessage {
+	width: 75%
     text-align:center;
     color: darkred;
     font-weight:bold;
     background-color: lightpink;
 }
-ul{
+div.gray {
+	background-color: #eeeeee;
+	width: auto;
+}
+ul.params{
 	display: table; 
 	width: 100%;
-	vertical-align: middle;
+	margin: 0 6%;
+	text-align: left;
+}
+ul.fields{
+	display: table; 
+	width: 100%;
 	margin: 0 6%;
 	text-align: left;
 }
 li { 
 	display: inline-table; 
+	vertical-align: middle;
 	width: 25%;
 	height: 20px;
-	background: #d5ede3;
-	border: 3px solid #ffffff;
-	vertical-align: middle;
+	background: #d3eae1;
+	border: 3px solid #eeeeee;
 	padding: 2px;
 	font-size: 12px;
+	text-indent: 10px;
 }
 
 .btn {

@@ -37,6 +37,7 @@ public class PathsController {
         writerSh = new PrintWriter("scriptTest.sh", "UTF-8");     
         writerSh.println("#!/bin/sh ");
         writerSh.println("logstash --version");
+        writerSh.println("plugin install logstash-filter-range");
         writerSh.close();
         File logstashOutput = new File("logstashOutput.txt");
         pb = new ProcessBuilder("/bin/bash", "scriptTest.sh");

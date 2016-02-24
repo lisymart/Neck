@@ -12,6 +12,8 @@ import java.util.TreeSet;
 import java.util.concurrent.Future;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.scheduling.annotation.EnableAsync;
@@ -25,11 +27,11 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 @SpringBootApplication
 @EnableAsync
-public class PcapController {    
+public class ShowOptionsController {    
 	@Autowired
 	private LogstashProcessService lps;
 	
-    @RequestMapping(value = "/pcap", method = RequestMethod.POST, params="uploadToES")
+    @RequestMapping(value = "/showOptions", method = RequestMethod.POST, params="uploadToES")
     	public String uploadToES(HttpServletRequest request,@RequestParam final String addition) 
     			throws ServletException, IOException, InterruptedException {
     	TreeSet<String> fileNames = new TreeSet<>(Arrays.asList(request.getParameterValues("fileNames")));
@@ -39,6 +41,8 @@ public class PcapController {
         TreeSet<String> uppercase = new TreeSet<>();
         TreeSet<String> lowercase = new TreeSet<>();
         TreeSet<String> anonymize = new TreeSet<>();
+        String store = request.getParameter("store");
+        String stored = request.getParameter("stored");
         String timeStamp = null;
         
         if (null != request.getParameterValues("rename")) {
@@ -69,10 +73,26 @@ public class PcapController {
         String annmAlgo = request.getParameter("annmAlgo");
         LogConfig confFile= new LogConfig(ts, renaming, delete, uppercase, lowercase, anonymize, annmAlgo, addition);
         
-        for (String name : fileNames){
-        	File folder = new File("data/pendings/" + name);
-        	for (File fileName : folder.listFiles()){        
-        		results.add(lps.process(fileName, confFile.getConfig().getAbsolutePath()));
+        if (stored.contains("stored")){
+        	for (String name : fileNames){
+            	File folder = new File("data/stored/" + name);
+            	for (File fileName : folder.listFiles()){        
+            		results.add(lps.process(fileName, confFile.getConfig().getAbsolutePath()));
+            	}
+            }
+        }
+        if (stored.contains("new")){
+        	for (String name : fileNames){
+            	File folder = new File("data/pendings/" + name);
+            	for (File fileName : folder.listFiles()){        
+            		results.add(lps.process(fileName, confFile.getConfig().getAbsolutePath()));
+            	}
+            }
+        }
+        if (stored.contains("single")){
+        	for (String name : fileNames){
+        		File file = new File("data/uploads/" + name);
+        		results.add(lps.process(file, confFile.getConfig().getAbsolutePath()));
         	}
         }
         
@@ -85,19 +105,47 @@ public class PcapController {
         	}
         	Thread.sleep(100);
         }
-        for (String name : fileNames){
-        	File folder = new File("data/pendings/" + name);
-        	for (File fileName : folder.listFiles()){        
-        		File file = new File (fileName.getAbsolutePath());
-        		file.delete();
-        	}
-        	File file = new File("data/pendings/" + name);
-        	file.delete();
+        
+        File strd = new File("data/stored");
+        if (!strd.exists()) strd.mkdirs();
+        
+        if (store.contains("store") && stored.contains("new")) {
+    		for (String name : fileNames){
+            	File srcDir = new File("data/pendings/"+name);
+            	File destDir = new File("data/stored/"+name);
+        	FileUtils.moveDirectory(srcDir, destDir);
+    		}
         }
+        if (store.contains("store") && stored.contains("single")) {
+    		for (String name : fileNames){
+            	File srcDir = new File("data/uploads/"+name);
+            	File destDir = new File("data/stored/"+name+"/"+name);
+        	FileUtils.moveFile(srcDir, destDir);
+    		}
+        } 
+        if(store.contains("delete") && stored.contains("new")){
+        	for (String nm : fileNames){
+               	File folder = new File("data/pendings/" + nm);
+               	for (File fileName : folder.listFiles()){        
+               		File file = new File (fileName.getAbsolutePath());
+               		file.delete();
+               	}
+               	File file = new File("data/pendings/" + nm);
+               	file.delete();
+            }
+        }
+        if(store.contains("delete") && stored.contains("single")){
+        	for (String nm : fileNames){
+               	File file = new File("data/uploads/" + nm);
+               	file.delete();
+            }
+        }
+        	
+        
         return "success";
     }
      
-    @RequestMapping(value = "/pcap", method = RequestMethod.POST, params="rnm")
+    @RequestMapping(value = "/showOptions", method = RequestMethod.POST, params="rnm")
 	public ModelAndView rename(HttpServletRequest request){
     	TreeSet<String> fileNames = new TreeSet<>(Arrays.asList(request.getParameterValues("fileNames")));
     	TreeSet<String> params = new TreeSet<>();
@@ -106,6 +154,8 @@ public class PcapController {
         TreeSet<String> uppercase = new TreeSet<>();
         TreeSet<String> lowercase = new TreeSet<>();
         TreeSet<String> anonymize = new TreeSet<>();
+        String store = request.getParameter("store");
+        String stored = request.getParameter("stored");
         String timeStamp = null;
         
         if (null != request.getParameterValues("rename")) {
@@ -136,6 +186,8 @@ public class PcapController {
         }
         params.removeAll(rename);
         Map<String, Object> model = new HashMap<>();
+        model.put("store", store);
+        model.put("stored", stored);
         if (!anonymize.isEmpty()) model.put("anonymList", anonymize);
         if (!uppercase.isEmpty()) model.put("uppercaseList", uppercase);
         if (!lowercase.isEmpty()) model.put("lowercaseList", lowercase);
@@ -144,10 +196,10 @@ public class PcapController {
         if (!fileNames.isEmpty()) model.put("fileNames", fileNames);
         if (!rename.isEmpty()) model.put("renameList", rename);
         if (!params.isEmpty())model.put("attributesList", params);
-        return new ModelAndView("pcap", model);
+        return new ModelAndView("showOptions", model);
     }
     
-    @RequestMapping(value = "/pcap", method = RequestMethod.POST, params="dlt")
+    @RequestMapping(value = "/showOptions", method = RequestMethod.POST, params="dlt")
 	public ModelAndView delete(HttpServletRequest request){
     	TreeSet<String> fileNames = new TreeSet<>(Arrays.asList(request.getParameterValues("fileNames")));
     	TreeSet<String> params = new TreeSet<>();
@@ -156,6 +208,8 @@ public class PcapController {
         TreeSet<String> uppercase = new TreeSet<>();
         TreeSet<String> lowercase = new TreeSet<>();
         TreeSet<String> anonymize = new TreeSet<>();
+        String store = request.getParameter("store");
+        String stored = request.getParameter("stored");
         String timeStamp = null;
         
         if (null != request.getParameterValues("rename")) {
@@ -186,6 +240,8 @@ public class PcapController {
         }
         params.removeAll(delete);
         Map<String, Object> model = new HashMap<>();
+        model.put("store", store);
+        model.put("stored", stored);
         if (!anonymize.isEmpty()) model.put("anonymList", anonymize);
         if (!uppercase.isEmpty()) model.put("uppercaseList", uppercase);
         if (!lowercase.isEmpty()) model.put("lowercaseList", lowercase);
@@ -194,10 +250,10 @@ public class PcapController {
         if (!fileNames.isEmpty()) model.put("fileNames", fileNames);
         if (!rename.isEmpty()) model.put("renameList", rename);
         if (!params.isEmpty())model.put("attributesList", params);
-        return new ModelAndView("pcap", model);
+        return new ModelAndView("showOptions", model);
     }
     
-    @RequestMapping(value = "/pcap", method = RequestMethod.POST, params="ts")
+    @RequestMapping(value = "/showOptions", method = RequestMethod.POST, params="ts")
 	public ModelAndView timeStamp(HttpServletRequest request){
     	TreeSet<String> fileNames = new TreeSet<>(Arrays.asList(request.getParameterValues("fileNames")));
     	TreeSet<String> params = new TreeSet<>();
@@ -206,6 +262,8 @@ public class PcapController {
         TreeSet<String> uppercase = new TreeSet<>();
         TreeSet<String> lowercase = new TreeSet<>();
         TreeSet<String> anonymize = new TreeSet<>();
+        String store = request.getParameter("store");
+        String stored = request.getParameter("stored");
         String timeStamp = null;
         String message = null;
         
@@ -237,6 +295,8 @@ public class PcapController {
         	params.remove(timeStamp);
         }
         Map<String, Object> model = new HashMap<>();
+        model.put("store", store);
+        model.put("stored", stored);
         if (!anonymize.isEmpty()) model.put("anonymList", anonymize);
         if (!uppercase.isEmpty()) model.put("uppercaseList", uppercase);
         if (!lowercase.isEmpty()) model.put("lowercaseList", lowercase);
@@ -246,10 +306,10 @@ public class PcapController {
         if (!fileNames.isEmpty()) model.put("fileNames", fileNames);
         if (!rename.isEmpty()) model.put("renameList", rename);
         if (!params.isEmpty())model.put("attributesList", params);
-        return new ModelAndView("pcap", model);
+        return new ModelAndView("showOptions", model);
     }
     
-    @RequestMapping(value = "/pcap", method = RequestMethod.POST, params="uc")
+    @RequestMapping(value = "/showOptions", method = RequestMethod.POST, params="uc")
 	public ModelAndView uppercase(HttpServletRequest request){
     	TreeSet<String> fileNames = new TreeSet<>(Arrays.asList(request.getParameterValues("fileNames")));
     	TreeSet<String> params = new TreeSet<>();
@@ -258,6 +318,8 @@ public class PcapController {
         TreeSet<String> uppercase = new TreeSet<>();
         TreeSet<String> lowercase = new TreeSet<>();
         TreeSet<String> anonymize = new TreeSet<>();
+        String store = request.getParameter("store");
+        String stored = request.getParameter("stored");
         String timeStamp = null;
         
         if (null != request.getParameterValues("rename")) {
@@ -288,6 +350,8 @@ public class PcapController {
         }
         params.removeAll(uppercase);
         Map<String, Object> model = new HashMap<>();
+        model.put("store", store);
+        model.put("stored", stored);
         if (!anonymize.isEmpty()) model.put("anonymList", anonymize);
         if (!uppercase.isEmpty()) model.put("uppercaseList", uppercase);
         if (!lowercase.isEmpty()) model.put("lowercaseList", lowercase);
@@ -296,10 +360,10 @@ public class PcapController {
         if (!fileNames.isEmpty()) model.put("fileNames", fileNames);
         if (!rename.isEmpty()) model.put("renameList", rename);
         if (!params.isEmpty())model.put("attributesList", params);
-        return new ModelAndView("pcap", model);
+        return new ModelAndView("showOptions", model);
     }
     
-    @RequestMapping(value = "/pcap", method = RequestMethod.POST, params="annm")
+    @RequestMapping(value = "/showOptions", method = RequestMethod.POST, params="annm")
 	public ModelAndView anonymize(HttpServletRequest request){
     	TreeSet<String> fileNames = new TreeSet<>(Arrays.asList(request.getParameterValues("fileNames")));
     	TreeSet<String> params = new TreeSet<>();
@@ -308,6 +372,8 @@ public class PcapController {
         TreeSet<String> uppercase = new TreeSet<>();
         TreeSet<String> lowercase = new TreeSet<>();
         TreeSet<String> anonymize = new TreeSet<>();
+        String store = request.getParameter("store");
+        String stored = request.getParameter("stored");
         String timeStamp = null;
         
         if (null != request.getParameterValues("rename")) {
@@ -338,6 +404,8 @@ public class PcapController {
         }
         params.removeAll(anonymize);
         Map<String, Object> model = new HashMap<>();
+        model.put("stored", stored);
+        model.put("store", store);
         if (!anonymize.isEmpty()) model.put("anonymList", anonymize);
         if (!uppercase.isEmpty()) model.put("uppercaseList", uppercase);
         if (!lowercase.isEmpty()) model.put("lowercaseList", lowercase);
@@ -346,10 +414,10 @@ public class PcapController {
         if (!fileNames.isEmpty()) model.put("fileNames", fileNames);
         if (!rename.isEmpty()) model.put("renameList", rename);
         if (!params.isEmpty())model.put("attributesList", params);
-        return new ModelAndView("pcap", model);
+        return new ModelAndView("showOptions", model);
     }
     
-    @RequestMapping(value = "/pcap", method = RequestMethod.POST, params="lc")
+    @RequestMapping(value = "/showOptions", method = RequestMethod.POST, params="lc")
 	public ModelAndView lowercase(HttpServletRequest request){
     	TreeSet<String> fileNames = new TreeSet<>(Arrays.asList(request.getParameterValues("fileNames")));
     	TreeSet<String> params = new TreeSet<>();
@@ -358,6 +426,8 @@ public class PcapController {
         TreeSet<String> uppercase = new TreeSet<>();
         TreeSet<String> lowercase = new TreeSet<>();
         TreeSet<String> anonymize = new TreeSet<>();
+        String store = request.getParameter("store");
+        String stored = request.getParameter("stored");
         String timeStamp = null;
         
         if (null != request.getParameterValues("rename")) {
@@ -388,6 +458,8 @@ public class PcapController {
         }
         params.removeAll(lowercase);
         Map<String, Object> model = new HashMap<>();
+        model.put("stored", stored);
+        model.put("store", store);
         if (!anonymize.isEmpty()) model.put("anonymList", anonymize);
         if (!uppercase.isEmpty()) model.put("uppercaseList", uppercase);
         if (!lowercase.isEmpty()) model.put("lowercaseList", lowercase);
@@ -396,6 +468,6 @@ public class PcapController {
         if (!fileNames.isEmpty()) model.put("fileNames", fileNames);
         if (!rename.isEmpty()) model.put("renameList", rename);
         if (!params.isEmpty())model.put("attributesList", params);
-        return new ModelAndView("pcap", model);
+        return new ModelAndView("showOptions", model);
     }
 }
