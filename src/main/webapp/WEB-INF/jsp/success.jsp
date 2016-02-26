@@ -15,7 +15,8 @@
     <body>
 <div id="center">
 <h1> Neck </h1>
-<form action="/Neck/success" method="POST"> 
+<form action="/Neck/success" method="POST">
+<embed hidden="true" src="${pageContext.request.contextPath}/resources/notify.mp3"></embed> 
 <input type="hidden" name="ES" value="${ES}">
 <h2> Uploading was successful. </h2>
 <br>
