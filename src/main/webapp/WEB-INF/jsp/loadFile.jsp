@@ -17,13 +17,11 @@
 <input type="hidden" name="ES" value="${ES}">
 <img src="${pageContext.request.contextPath}/resources/spinner.gif" style="display: none;" id="loading_image">
 <br>
-<table class="table1">
-<tr>
-<td><a>(store on server <input type="checkbox" name="store" value="store">)</a>
-<input type="file" name="filesToUpload" multiple="multiple"></td>
-<td><input class="btn" type="submit" name="chooseFile" value="Choose stored file"></td>
-</tr>
-</table>
+<a>(store on server <input type="checkbox" name="store" value="store">)</a>
+<input type="file" name="filesToUpload" multiple="multiple">
+<br>
+<br>
+<input class="btn" type="submit" name="chooseFile" value="Choose stored file">
 <br>
 <br>
 <div class="gray">
