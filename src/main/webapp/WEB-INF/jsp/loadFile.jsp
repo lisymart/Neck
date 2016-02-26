@@ -5,6 +5,7 @@
 <head>
 <meta charset="UTF-8">
 <link href="${pageContext.request.contextPath}/resources/styles.css" rel="stylesheet" type="text/css"/>
+<script src="${pageContext.request.contextPath}/resources/scripts.js" type="text/javascript"></script>
 <title> Neck </title>
 </head>
 <body>
@@ -12,7 +13,9 @@
 <h1> Neck </h1>
 <br>
 <h4> You can upload multiple files to process here.<br> But please, upload files of the same type.<br> Supported are .pcap .log and .csv </h4>
-<form action="/Neck/loadFile" method="POST" enctype="multipart/form-data"> 
+<form action="/Neck/loadFile" method="POST" enctype="multipart/form-data" onsubmit="ShowLoading()">
+<input type="hidden" name="ES" value="${ES}">
+<img src="${pageContext.request.contextPath}/resources/spinner.gif" style="display: none;" id="loading_image">
 <br>
 <table class="table1">
 <tr>
@@ -36,7 +39,9 @@
 		</c:if>
 		</div>
 		<br>
-<input class="btn" name="continue" type="submit" value="Next">
+<div id="spinner" style="display: none"><img src="/Neck/resources/spinner.gif"/><br> Processing, please wait.</div>
+<br>
+<input id="button-upload" class="btn" name="continue" type="submit" value="Next">
 <br>
 <br>
 <div class="errorMessage">${message}</div> 

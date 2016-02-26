@@ -8,7 +8,6 @@ import java.net.ConnectException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
-
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -25,17 +24,18 @@ public class IndexController {
     public ModelAndView index(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
     	String message = "";
     	String line = null;
+    	String EShost = request.getParameter("EShost");
         try{
-            URL url = new URL("http://localhost:9200/");
+            URL url = new URL("http://"+ EShost +"/");
             URLConnection urlConnection = url.openConnection();
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
             line = bufferedReader.readLine();
             bufferedReader.close();
         } catch (ConnectException e) {            
         }        
-    	if (line == null) message += "Elasticsearch is not running. Start ES and try again.<br>";
+    	if (line == null) message += "Elasticsearch is not running. Start ES (or check host) and try again.<br>";
        
-        if (paths.exists()) { if (line != null) return new ModelAndView("loadFile"); else return new ModelAndView("index", "message", message);}
+        if (paths.exists()) { if (line != null) return new ModelAndView("loadFile", "ES", EShost); else return new ModelAndView("index", "message", message);}
        	else {
        		
     	PathsController pc = new PathsController();
@@ -49,7 +49,7 @@ public class IndexController {
         	return new ModelAndView("index", "message", message);
         } else {    
         	paths.createNewFile();
-        	return new ModelAndView("loadFile");
+        	return new ModelAndView("loadFile", "ES", EShost);
         }
     }
     }

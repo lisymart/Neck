@@ -37,7 +37,7 @@ public class ShowOptionsController {
 	private DateFormat hourFormat = new SimpleDateFormat("HH-mm-ssss");
 	
     @RequestMapping(value = "/showOptions", method = RequestMethod.POST, params="uploadToES")
-    	public String uploadToES(HttpServletRequest request,@RequestParam final String addition) 
+    	public ModelAndView uploadToES(HttpServletRequest request,@RequestParam final String addition) 
     			throws ServletException, IOException, InterruptedException {
     	TreeSet<String> fileNames = new TreeSet<>(Arrays.asList(request.getParameterValues("fileNames")));
     	List<Future<String>> results = new ArrayList<>();
@@ -48,6 +48,7 @@ public class ShowOptionsController {
         TreeSet<String> anonymize = new TreeSet<>();
         String store = request.getParameter("store");
         String stored = request.getParameter("stored");
+        String ES = request.getParameter("ES");
         String timeStamp = null;
         
         if (null != request.getParameterValues("rename")) {
@@ -77,7 +78,7 @@ public class ShowOptionsController {
         String ts = timeStamp + "->" + request.getParameter("timeStampFormat");
         String annmAlgo = request.getParameter("annmAlgo");
         Date date = new Date();
-        LogConfig confFile= new LogConfig(hourFormat.format(date) + ".conf", ts, renaming, delete, uppercase, lowercase, anonymize, annmAlgo, addition);
+        LogConfig confFile= new LogConfig(ES, hourFormat.format(date) + ".conf", ts, renaming, delete, uppercase, lowercase, anonymize, annmAlgo, addition);
         String configPath = confFile.getConfig(hourFormat.format(date) + ".conf").getAbsolutePath();
         
         if (stored.contains("stored")){
@@ -150,7 +151,7 @@ public class ShowOptionsController {
         File cfg = new File(hourFormat.format(date) + ".conf");
         cfg.delete();
         
-        return "success";
+        return new ModelAndView("success", "ES", ES);
     }
     
     @RequestMapping(value = "/showOptions", method = RequestMethod.POST, params="restore")
@@ -164,6 +165,7 @@ public class ShowOptionsController {
         TreeSet<String> anonymize = new TreeSet<>();
         String store = request.getParameter("store");
         String stored = request.getParameter("stored");
+        String ES = request.getParameter("ES");
         String timeStamp = null;
         
         if (null != request.getParameterValues("rename")) {
@@ -198,6 +200,7 @@ public class ShowOptionsController {
         Map<String, Object> model = new HashMap<>();
         model.put("stored", stored);
         model.put("store", store);
+        model.put("ES", ES);
         if (!fileNames.isEmpty()) model.put("fileNames", fileNames);
         if (!params.isEmpty())model.put("attributesList", params);
         return new ModelAndView("showOptions", model);
@@ -214,6 +217,7 @@ public class ShowOptionsController {
         TreeSet<String> anonymize = new TreeSet<>();
         String store = request.getParameter("store");
         String stored = request.getParameter("stored");
+        String ES = request.getParameter("ES");
         String timeStamp = null;
         
         if (null != request.getParameterValues("rename")) {
@@ -249,6 +253,7 @@ public class ShowOptionsController {
         Map<String, Object> model = new HashMap<>();
         model.put("store", store);
         model.put("stored", stored);
+        model.put("ES", ES);
         if (!anonymize.isEmpty()) model.put("anonymList", anonymize);
         if (!uppercase.isEmpty()) model.put("uppercaseList", uppercase);
         if (!lowercase.isEmpty()) model.put("lowercaseList", lowercase);
@@ -271,6 +276,7 @@ public class ShowOptionsController {
         TreeSet<String> anonymize = new TreeSet<>();
         String store = request.getParameter("store");
         String stored = request.getParameter("stored");
+        String ES = request.getParameter("ES");
         String timeStamp = null;
         
         if (null != request.getParameterValues("rename")) {
@@ -306,6 +312,7 @@ public class ShowOptionsController {
         Map<String, Object> model = new HashMap<>();
         model.put("store", store);
         model.put("stored", stored);
+        model.put("ES", ES);
         if (!anonymize.isEmpty()) model.put("anonymList", anonymize);
         if (!uppercase.isEmpty()) model.put("uppercaseList", uppercase);
         if (!lowercase.isEmpty()) model.put("lowercaseList", lowercase);
@@ -328,6 +335,7 @@ public class ShowOptionsController {
         TreeSet<String> anonymize = new TreeSet<>();
         String store = request.getParameter("store");
         String stored = request.getParameter("stored");
+        String ES = request.getParameter("ES");
         String timeStamp = null;
         String message = null;
         
@@ -363,6 +371,7 @@ public class ShowOptionsController {
         Map<String, Object> model = new HashMap<>();
         model.put("store", store);
         model.put("stored", stored);
+        model.put("ES", ES);
         if (!anonymize.isEmpty()) model.put("anonymList", anonymize);
         if (!uppercase.isEmpty()) model.put("uppercaseList", uppercase);
         if (!lowercase.isEmpty()) model.put("lowercaseList", lowercase);
@@ -386,6 +395,7 @@ public class ShowOptionsController {
         TreeSet<String> anonymize = new TreeSet<>();
         String store = request.getParameter("store");
         String stored = request.getParameter("stored");
+        String ES = request.getParameter("ES");
         String timeStamp = null;
         
         if (null != request.getParameterValues("rename")) {
@@ -421,6 +431,7 @@ public class ShowOptionsController {
         Map<String, Object> model = new HashMap<>();
         model.put("store", store);
         model.put("stored", stored);
+        model.put("ES", ES);
         if (!anonymize.isEmpty()) model.put("anonymList", anonymize);
         if (!uppercase.isEmpty()) model.put("uppercaseList", uppercase);
         if (!lowercase.isEmpty()) model.put("lowercaseList", lowercase);
@@ -443,6 +454,7 @@ public class ShowOptionsController {
         TreeSet<String> anonymize = new TreeSet<>();
         String store = request.getParameter("store");
         String stored = request.getParameter("stored");
+        String ES = request.getParameter("ES");
         String timeStamp = null;
         
         if (null != request.getParameterValues("rename")) {
@@ -477,6 +489,7 @@ public class ShowOptionsController {
         Map<String, Object> model = new HashMap<>();
         model.put("stored", stored);
         model.put("store", store);
+        model.put("ES", ES);
         if (!anonymize.isEmpty()) model.put("anonymList", anonymize);
         if (!uppercase.isEmpty()) model.put("uppercaseList", uppercase);
         if (!lowercase.isEmpty()) model.put("lowercaseList", lowercase);
@@ -499,6 +512,7 @@ public class ShowOptionsController {
         TreeSet<String> anonymize = new TreeSet<>();
         String store = request.getParameter("store");
         String stored = request.getParameter("stored");
+        String ES = request.getParameter("ES");
         String timeStamp = null;
         
         if (null != request.getParameterValues("rename")) {
@@ -534,6 +548,7 @@ public class ShowOptionsController {
         Map<String, Object> model = new HashMap<>();
         model.put("stored", stored);
         model.put("store", store);
+        model.put("ES", ES);
         if (!anonymize.isEmpty()) model.put("anonymList", anonymize);
         if (!uppercase.isEmpty()) model.put("uppercaseList", uppercase);
         if (!lowercase.isEmpty()) model.put("lowercaseList", lowercase);

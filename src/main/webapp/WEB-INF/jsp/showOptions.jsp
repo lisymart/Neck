@@ -5,13 +5,15 @@
 <head>
 	<meta charset="UTF-8">
 	<link href="${pageContext.request.contextPath}/resources/styles.css" rel="stylesheet" type="text/css"/>
+	<script src="${pageContext.request.contextPath}/resources/scripts.js" type="text/javascript"></script>
 	<title> Neck </title>
 </head> 
 <body>
 	<div id="center">
-		<form name="frm" action="/Neck/showOptions" method="POST"> 
+		<form name="frm" action="/Neck/showOptions" method="POST" onsubmit="ShowLoading()"> 
 		<input type="hidden" name="store" value="${store}">
 		<input type="hidden" name="stored" value="${stored}">
+		<input type="hidden" name="ES" value="${ES}">
 		<h1> Neck </h1>
 		<div> Here are selected attributes from the first 1000 lines of each log. You can modify them. </div>
 		<div class="errorMessage">${message}</div> 
@@ -83,7 +85,7 @@
 		<div class="gray">
 		<c:if test="${not empty deleteList}">
 		<h4> Removing: </h4>
-		<ul class="fields">
+		<ul>
 			<c:forEach var="item" items="${deleteList}">
 				<li>	${item} <input type="hidden" name="delete" value="${item}"> </li>
 			</c:forEach>
@@ -142,81 +144,14 @@
 		<br>
 		<br>
 		</div>
-		<input class="btn" name="uploadToES" type="submit" value="Upload to ES">
+		<br>
+		<div id="spinner" style="display: none"><img src="/Neck/resources/spinner.gif"/><br> Processing, please wait.</div>
+		<br>
+		<input id="button-upload" class="btn" name="uploadToES" type="submit" value="Upload to ES">
+		<br>
+		<br>
 		</form>
 	</div>
 </body>
-
-<script>
-var fieldName='checked';
-
-function selectall(){
-  var i=document.frm.elements.length;
-  var e=document.frm.elements;
-  var name=new Array();
-  var value=new Array();
-  var j=0;
-  for(var k=0;k<i;k++)
-  {
-    if(document.frm.elements[k].name==fieldName)
-    {
-      if(document.frm.elements[k].checked==true){
-        value[j]=document.frm.elements[k].value;
-        j++;
-      }
-    }
-  }
-  checkSelect();
-}
-function selectCheck(obj)
-{
- var i=document.frm.elements.length;
-  for(var k=0;k<i;k++)
-  {
-    if(document.frm.elements[k].name==fieldName)
-    {
-      document.frm.elements[k].checked=obj;
-    }
-  }
-  selectall();
-}
-
-function selectallMe()
-{
-  if(document.frm.allCheck.checked==true)
-  {
-   selectCheck(true);
-  }
-  else
-  {
-    selectCheck(false);
-  }
-}
-function checkSelect()
-{
- var i=document.frm.elements.length;
- var berror=true;
-  for(var k=0;k<i;k++)
-  {
-    if(document.frm.elements[k].name==fieldName)
-    {
-      if(document.frm.elements[k].checked==false)
-      {
-        berror=false;
-        break;
-      }
-    }
-  }
-  if(berror==false)
-  {
-    document.frm.allCheck.checked=false;
-  }
-  else
-  {
-    document.frm.allCheck.checked=true;
-  }
-}
-</script>
-
 </html>
 

@@ -16,6 +16,7 @@
 <div id="center">
 <h1> Neck </h1>
 <form action="/Neck/success" method="POST"> 
+<input type="hidden" name="ES" value="${ES}">
 <h2> Uploading was successful. </h2>
 <br>
 <br>

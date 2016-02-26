@@ -13,7 +13,7 @@ public class LogConfig {
 
 
 
-    public LogConfig(String confName, String timeStamp, TreeMap<String, String> renaming, TreeSet<String> delete, TreeSet<String> uppercase, 
+    public LogConfig(String host, String confName, String timeStamp, TreeMap<String, String> renaming, TreeSet<String> delete, TreeSet<String> uppercase, 
     		TreeSet<String> lowercase, TreeSet<String> anonymize, String annmAlgo, String addition) throws FileNotFoundException, UnsupportedEncodingException {
     	PrintWriter writerSh = new PrintWriter(confName, "UTF-8");     
         writerSh.println("input { stdin {} }");
@@ -102,7 +102,7 @@ public class LogConfig {
         	writerSh.println(addition);
         }
         writerSh.println("ruby {code => \"event.to_hash.keys.each { |k| event[ k.sub('.','-') ] = event.remove(k) if k.include?'.' }\"} }");
-        writerSh.println("output { elasticsearch { hosts => [\"localhost:9200\"] }");
+        writerSh.println("output { elasticsearch { hosts => [\"" + host + "\"] }");
         writerSh.println("}");
         writerSh.close();
 

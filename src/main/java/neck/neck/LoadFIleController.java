@@ -44,6 +44,7 @@ public class LoadFIleController {
     	ArrayList<String> fileNames = new ArrayList<>();
     	Set<String> filetypes = new HashSet<>();
     	String store = request.getParameter("store");
+    	String ES = request.getParameter("ES");
     	String filetype = null;
     	boolean stored=false;
 
@@ -124,6 +125,7 @@ public class LoadFIleController {
                 	modelPcap.put("stored", "new");
                 }
                 modelPcap.put("store", save);
+                modelPcap.put("ES", ES);
                 modelPcap.put("fileNames", fileNames);
                 modelPcap.put("attributesList", attributesPcap);
                 
@@ -148,16 +150,21 @@ public class LoadFIleController {
                 	model.put("stored", "single");
                 }
                 model.put("store", save);
+                model.put("ES", ES);
                 model.put("fileNames", fileNames);
                 model.put("attributesList", attributes);
                 
                 return new ModelAndView("showOptions", model);
         }
-        return new ModelAndView("loadFile", "message", "Unsupported file type.");
+        Map <String, Object> model = new HashMap<>();
+        model.put("ES", ES);
+        model.put("message", "Unsupported file type.");
+        return new ModelAndView("loadFile", model);
     }   
     
     @RequestMapping(value = "/loadFile", method = RequestMethod.POST, params="chooseFile")
     public ModelAndView chooseFile(HttpServletRequest request) {
+    	String ES = request.getParameter("ES");
     	File folder = new File("data/stored");
     	ArrayList<String> names = new ArrayList<>();
     	Map <String, Object> model = new HashMap<>();
@@ -169,7 +176,7 @@ public class LoadFIleController {
         	}
     		model.put("fileList", names);
     	}
-    	
+    	model.put("ES", ES);
     	return new ModelAndView("loadFile", model);
     }
     
@@ -177,6 +184,7 @@ public class LoadFIleController {
     public ModelAndView delete(HttpServletRequest request) {
     	TreeSet<String> names = new TreeSet<>();
     	TreeSet<String> files = new TreeSet<>();
+    	String ES = request.getParameter("ES");
     	
     	if (null != request.getParameterValues("checked")){
     		for (String s: request.getParameterValues("checked")){
@@ -196,6 +204,7 @@ public class LoadFIleController {
     	}
     	
     	Map <String, Object> model = new HashMap<>();
+    	model.put("ES", ES);
     	model.put("fileList", files);
     	return new ModelAndView("loadFile", model);
     }
