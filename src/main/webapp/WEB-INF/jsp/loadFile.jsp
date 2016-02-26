@@ -32,6 +32,7 @@
 				<input type="hidden" name="files" value="${item}">
 			</c:forEach>
 		</ul>
+		<input class="btn" type="submit" name="delete" value="Delete selected">
 		</c:if>
 		</div>
 		<br>

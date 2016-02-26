@@ -12,9 +12,10 @@ public class LogConfig {
     private File config;
 
 
-    public LogConfig(String timeStamp, TreeMap<String, String> renaming, TreeSet<String> delete, TreeSet<String> uppercase, 
+
+    public LogConfig(String confName, String timeStamp, TreeMap<String, String> renaming, TreeSet<String> delete, TreeSet<String> uppercase, 
     		TreeSet<String> lowercase, TreeSet<String> anonymize, String annmAlgo, String addition) throws FileNotFoundException, UnsupportedEncodingException {
-        PrintWriter writerSh = new PrintWriter("configFile.conf", "UTF-8");     
+    	PrintWriter writerSh = new PrintWriter(confName, "UTF-8");     
         writerSh.println("input { stdin {} }");
         writerSh.println("filter { ");
         writerSh.println("json {source => \"message\"}");
@@ -107,8 +108,8 @@ public class LogConfig {
 
     }
 
-    public File getConfig() {
-        config = new File("configFile.conf");
+    public File getConfig(String confName) {
+        config = new File(confName);
         return config;
     }
     

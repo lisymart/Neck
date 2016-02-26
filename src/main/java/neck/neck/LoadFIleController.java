@@ -172,6 +172,33 @@ public class LoadFIleController {
     	
     	return new ModelAndView("loadFile", model);
     }
+    
+    @RequestMapping(value = "/loadFile", method = RequestMethod.POST, params="delete")
+    public ModelAndView delete(HttpServletRequest request) {
+    	TreeSet<String> names = new TreeSet<>();
+    	TreeSet<String> files = new TreeSet<>();
+    	
+    	if (null != request.getParameterValues("checked")){
+    		for (String s: request.getParameterValues("checked")){
+        		names.add(s);
+        	}
+    		for (String s: request.getParameterValues("files")){
+    			files.add(s);
+    		}
+    		for (String s: names){
+    			File folder = new File("data/stored/" + s);
+    			for (File f: folder.listFiles()){
+    				f.delete();
+    			}
+    			folder.delete();
+    		}
+    		files.removeAll(names);
+    	}
+    	
+    	Map <String, Object> model = new HashMap<>();
+    	model.put("fileList", files);
+    	return new ModelAndView("loadFile", model);
+    }
 
     public TreeSet<String> showAttributes(ArrayList<String> fileNames, String location) throws ServletException, IOException {
         TreeSet<String> attributes = new TreeSet<String>();

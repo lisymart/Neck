@@ -3,8 +3,6 @@ package neck.neck;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.concurrent.Future;
 import java.util.logging.Level;
 import org.springframework.stereotype.Service;
@@ -13,13 +11,11 @@ import org.springframework.scheduling.annotation.AsyncResult;
 
 @Service
 public class LogstashProcessService{
-    DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss");
-    DateFormat hourFormat = new SimpleDateFormat("HH-mm-ss");
 
     @Async
     public Future<String> process(File fileName, String configuration) throws IOException, InterruptedException{
         String renaming = fileName.getAbsolutePath().replace("/", "-");
-        if (fileName.getAbsolutePath().endsWith(".log")){   
+        if (fileName.getAbsolutePath().endsWith(".log") || fileName.getAbsolutePath().endsWith(".csv")){   
         	System.out.println("[" + Thread.currentThread().getName() + "] - " + fileName.getAbsolutePath() + " is being logstashed.");
         	PrintWriter writer = new PrintWriter("script" + renaming + ".sh", "UTF-8");    
         	writer.println("#!/bin/sh ");

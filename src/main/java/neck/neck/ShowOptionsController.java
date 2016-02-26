@@ -2,8 +2,11 @@ package neck.neck;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,6 +33,8 @@ import org.springframework.web.servlet.ModelAndView;
 public class ShowOptionsController {    
 	@Autowired
 	private LogstashProcessService lps;
+	
+	private DateFormat hourFormat = new SimpleDateFormat("HH-mm-ssss");
 	
     @RequestMapping(value = "/showOptions", method = RequestMethod.POST, params="uploadToES")
     	public String uploadToES(HttpServletRequest request,@RequestParam final String addition) 
@@ -71,13 +76,15 @@ public class ShowOptionsController {
         }
         String ts = timeStamp + "->" + request.getParameter("timeStampFormat");
         String annmAlgo = request.getParameter("annmAlgo");
-        LogConfig confFile= new LogConfig(ts, renaming, delete, uppercase, lowercase, anonymize, annmAlgo, addition);
+        Date date = new Date();
+        LogConfig confFile= new LogConfig(hourFormat.format(date) + ".conf", ts, renaming, delete, uppercase, lowercase, anonymize, annmAlgo, addition);
+        String configPath = confFile.getConfig(hourFormat.format(date) + ".conf").getAbsolutePath();
         
         if (stored.contains("stored")){
         	for (String name : fileNames){
             	File folder = new File("data/stored/" + name);
             	for (File fileName : folder.listFiles()){        
-            		results.add(lps.process(fileName, confFile.getConfig().getAbsolutePath()));
+            		results.add(lps.process(fileName, configPath));
             	}
             }
         }
@@ -85,14 +92,14 @@ public class ShowOptionsController {
         	for (String name : fileNames){
             	File folder = new File("data/pendings/" + name);
             	for (File fileName : folder.listFiles()){        
-            		results.add(lps.process(fileName, confFile.getConfig().getAbsolutePath()));
+            		results.add(lps.process(fileName, configPath));
             	}
             }
         }
         if (stored.contains("single")){
         	for (String name : fileNames){
         		File file = new File("data/uploads/" + name);
-        		results.add(lps.process(file, confFile.getConfig().getAbsolutePath()));
+        		results.add(lps.process(file, configPath));
         	}
         }
         
@@ -140,9 +147,60 @@ public class ShowOptionsController {
                	file.delete();
             }
         }
-        	
+        File cfg = new File(hourFormat.format(date) + ".conf");
+        cfg.delete();
         
         return "success";
+    }
+    
+    @RequestMapping(value = "/showOptions", method = RequestMethod.POST, params="restore")
+	public ModelAndView restore(HttpServletRequest request){
+    	TreeSet<String> fileNames = new TreeSet<>(Arrays.asList(request.getParameterValues("fileNames")));
+    	TreeSet<String> params = new TreeSet<>();
+        TreeSet<String> rename = new TreeSet<>();
+        TreeSet<String> delete = new TreeSet<>();
+        TreeSet<String> uppercase = new TreeSet<>();
+        TreeSet<String> lowercase = new TreeSet<>();
+        TreeSet<String> anonymize = new TreeSet<>();
+        String store = request.getParameter("store");
+        String stored = request.getParameter("stored");
+        String timeStamp = null;
+        
+        if (null != request.getParameterValues("rename")) {
+        	rename = new TreeSet<>(Arrays.asList(request.getParameterValues("rename")));
+        }
+        if (null != request.getParameterValues("delete")) {
+        	delete = new TreeSet<>(Arrays.asList(request.getParameterValues("delete")));
+        }
+        if (null != request.getParameterValues("params")) {
+        	params = new TreeSet<>(Arrays.asList(request.getParameterValues("params")));
+        }
+        if (null != request.getParameterValues("timeStamp")) {
+        	timeStamp = request.getParameterValues("timeStamp")[0];
+        }
+        if (null != request.getParameterValues("uppercase")) {
+        	uppercase = new TreeSet<>(Arrays.asList(request.getParameterValues("uppercase")));
+        }
+        if (null != request.getParameterValues("lowercase")) {
+        	lowercase = new TreeSet<>(Arrays.asList(request.getParameterValues("lowercase")));
+        }
+        if (null != request.getParameterValues("anonym")) {
+        	anonymize = new TreeSet<>(Arrays.asList(request.getParameterValues("anonym")));
+        }
+        
+        params.addAll(anonymize);
+        params.addAll(uppercase);
+        params.addAll(lowercase);
+        if (timeStamp!= null) params.add(timeStamp);
+        params.addAll(delete);
+        params.addAll(rename);
+        
+        Map<String, Object> model = new HashMap<>();
+        model.put("stored", stored);
+        model.put("store", store);
+        if (!fileNames.isEmpty()) model.put("fileNames", fileNames);
+        if (!params.isEmpty())model.put("attributesList", params);
+        return new ModelAndView("showOptions", model);
     }
      
     @RequestMapping(value = "/showOptions", method = RequestMethod.POST, params="rnm")
@@ -181,9 +239,12 @@ public class ShowOptionsController {
         }
     	
         String[] checked = request.getParameterValues("checked");
-        for (String att : checked){
-        	rename.add(att);
+        if (null != checked){
+        	for (String att : checked){
+        		rename.add(att);
+        	}
         }
+        
         params.removeAll(rename);
         Map<String, Object> model = new HashMap<>();
         model.put("store", store);
@@ -235,9 +296,12 @@ public class ShowOptionsController {
         }
         
         String[] checked = request.getParameterValues("checked");
-        for (String att : checked){
-        	delete.add(att);
+        if (null != checked){
+        	for (String att : checked){
+        		delete.add(att);
+        	}
         }
+        
         params.removeAll(delete);
         Map<String, Object> model = new HashMap<>();
         model.put("store", store);
@@ -288,12 +352,14 @@ public class ShowOptionsController {
         
 
         String[] checked = request.getParameterValues("checked");
-        if (checked.length > 1) {
+        if (null != checked && checked.length > 1) {
         	message = "Only one field can represent the Time Stamp";
-        } else {
+        } 
+        if (null != checked && checked.length == 1) {
         	timeStamp = checked[0];
         	params.remove(timeStamp);
         }
+        
         Map<String, Object> model = new HashMap<>();
         model.put("store", store);
         model.put("stored", stored);
@@ -345,9 +411,12 @@ public class ShowOptionsController {
         }
         
         String[] checked = request.getParameterValues("checked");
-        for (String att : checked){
-        	uppercase.add(att);
+        if (null != checked){
+        	for (String att : checked){
+        		uppercase.add(att);
+        	}
         }
+        
         params.removeAll(uppercase);
         Map<String, Object> model = new HashMap<>();
         model.put("store", store);
@@ -399,8 +468,10 @@ public class ShowOptionsController {
         }
         
         String[] checked = request.getParameterValues("checked");
-        for (String att : checked){
-        	anonymize.add(att);
+        if (null != checked){
+        	for (String att : checked){
+        		anonymize.add(att);
+        	}
         }
         params.removeAll(anonymize);
         Map<String, Object> model = new HashMap<>();
@@ -453,9 +524,12 @@ public class ShowOptionsController {
         }
         
         String[] checked = request.getParameterValues("checked");
-        for (String att : checked){
-        	lowercase.add(att);
+        if (null != checked){
+        	for (String att : checked){
+        		lowercase.add(att);
+        	}
         }
+        
         params.removeAll(lowercase);
         Map<String, Object> model = new HashMap<>();
         model.put("stored", stored);

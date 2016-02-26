@@ -9,7 +9,7 @@
 </head> 
 <body>
 	<div id="center">
-		<form action="/Neck/showOptions" method="POST"> 
+		<form name="frm" action="/Neck/showOptions" method="POST"> 
 		<input type="hidden" name="store" value="${store}">
 		<input type="hidden" name="stored" value="${stored}">
 		<h1> Neck </h1>
@@ -27,24 +27,28 @@
 		<div> Choose attributes and action: </div>
 		<br>
 		<div>
-		<input class="btn" name="rnm" type="submit" value="Rename">
-		<input class="btn" name="dlt" type="submit" value="Delete">
-		<input class="btn" name="ts" type="submit" value="TimeStamp">
-		<input class="btn" name="uc" type="submit" value="UpperCase">
-		<input class="btn" name="lc" type="submit" value="LowerCase">
+		<input class="btn" name="restore" type="submit" value="Restore">
+		<br>
 		<input class="btn" name="annm" type="submit" value="Anonymize">
-		<ul class="params">	
+		<input class="btn" name="dlt" type="submit" value="Delete">
+		<input class="btn" name="rnm" type="submit" value="Rename">
+		<input class="btn" name="ts" type="submit" value="TimeStamp">
+		<input class="btn" name="lc" type="submit" value="LowerCase">
+		<input class="btn" name="uc" type="submit" value="UpperCase">
+		<br>
+		<input type="checkbox" name="allCheck" onClick="selectallMe()">  select all
+		<ul class="params">
 			<c:forEach var="item" items="${attributesList}">
-				<li> <input type="checkbox" name="checked" value="${item}"> ${item} </li>
+				<li> <input type="checkbox" name="checked" value="${item}" onClick="selectall()"> ${item} </li>
 				<input type="hidden" name="params" value="${item}">
 			</c:forEach>
 		</ul>
-		<input class="btn" name="rnm" type="submit" value="Rename">
-		<input class="btn" name="dlt" type="submit" value="Delete">
-		<input class="btn" name="ts" type="submit" value="TimeStamp">
-		<input class="btn" name="uc" type="submit" value="UpperCase">
-		<input class="btn" name="lc" type="submit" value="LowerCase">
 		<input class="btn" name="annm" type="submit" value="Anonymize">
+		<input class="btn" name="dlt" type="submit" value="Delete">
+		<input class="btn" name="rnm" type="submit" value="Rename">
+		<input class="btn" name="ts" type="submit" value="TimeStamp">
+		<input class="btn" name="lc" type="submit" value="LowerCase">
+		<input class="btn" name="uc" type="submit" value="UpperCase">
 		</div>
 		<br>
 		</div>
@@ -142,5 +146,77 @@
 		</form>
 	</div>
 </body>
+
+<script>
+var fieldName='checked';
+
+function selectall(){
+  var i=document.frm.elements.length;
+  var e=document.frm.elements;
+  var name=new Array();
+  var value=new Array();
+  var j=0;
+  for(var k=0;k<i;k++)
+  {
+    if(document.frm.elements[k].name==fieldName)
+    {
+      if(document.frm.elements[k].checked==true){
+        value[j]=document.frm.elements[k].value;
+        j++;
+      }
+    }
+  }
+  checkSelect();
+}
+function selectCheck(obj)
+{
+ var i=document.frm.elements.length;
+  for(var k=0;k<i;k++)
+  {
+    if(document.frm.elements[k].name==fieldName)
+    {
+      document.frm.elements[k].checked=obj;
+    }
+  }
+  selectall();
+}
+
+function selectallMe()
+{
+  if(document.frm.allCheck.checked==true)
+  {
+   selectCheck(true);
+  }
+  else
+  {
+    selectCheck(false);
+  }
+}
+function checkSelect()
+{
+ var i=document.frm.elements.length;
+ var berror=true;
+  for(var k=0;k<i;k++)
+  {
+    if(document.frm.elements[k].name==fieldName)
+    {
+      if(document.frm.elements[k].checked==false)
+      {
+        berror=false;
+        break;
+      }
+    }
+  }
+  if(berror==false)
+  {
+    document.frm.allCheck.checked=false;
+  }
+  else
+  {
+    document.frm.allCheck.checked=true;
+  }
+}
+</script>
+
 </html>
 
