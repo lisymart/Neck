@@ -18,7 +18,7 @@
 <tr>
 <td><a>(store on server <input type="checkbox" name="store" value="store">)</a>
 <input type="file" name="filesToUpload" multiple="multiple"></td>
-<td><input type="submit" name="chooseFile" value="Choose stored file"></td>
+<td><input class="btn" type="submit" name="chooseFile" value="Choose stored file"></td>
 </tr>
 </table>
 <br>
