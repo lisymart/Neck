@@ -10,7 +10,7 @@
 </head> 
 <body>
 	<div id="center">
-		<form name="frm" action="/Neck/showOptions" method="POST" onsubmit="ShowLoading()"> 
+		<form name="frm" action="/Neck/showOptions" method="POST" onsubmit="ShowLoading()">
 		<input type="hidden" name="store" value="${store}">
 		<input type="hidden" name="stored" value="${stored}">
 		<input type="hidden" name="ES" value="${ES}">
@@ -58,14 +58,10 @@
 		<div class="gray">
 		<c:if test="${not empty timeStamp}">
 		<input type="hidden" name="timeStamp" value="${timeStamp}">
-		<h4> Time Stamp is now --<b>  ${timeStamp}  </b>-- field. Choose its format :
-			<select name="timeStampFormat">
-				<option value="ISO8601"> ISO8601 </option>
-				<!-- <option value="YYYY/MM/dd HH:mm:ss"> 2015/04/14 09:32:01 </option>
-				<option value="dd.MM.YYYY HH:mm:ss"> 14.04.2015 09:32:01</option>
-				<option value="YYYY MMM dd HH:mm:ss"> 2015 Apr 17 09:32:01 </option> -->
-			</select>
-		</h4>
+		<p> new Time Stamp is <b><a style="color:green">  ${timeStamp}  </a></b> field.<br> (Choose its format e.g.: "UNIX", "ISO8601", "dd/MMM/yyyy:HH:mm:ss":
+			<input type="text" name="timeStampFormat" value="ISO8601" autofocus = "autofocus" required = "required">
+			)
+		</p>
 		</c:if>
 		</div>
 		<br>
@@ -146,10 +142,12 @@
 		</div>
 		<br>
 		<div id="spinner" style="display: none"><img src="/Neck/resources/spinner.gif"/><br> Processing, please wait.</div>
+		<div id="overlay" style="display: none"> </div>
 		<br>
 		<input id="button-upload" class="btn" name="uploadToES" type="submit" value="Upload to ES">
 		<br>
 		<br>
+		
 		</form>
 	</div>
 </body>

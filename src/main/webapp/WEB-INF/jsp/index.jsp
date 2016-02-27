@@ -27,6 +27,7 @@
 <br>
 <br>
 <div id="spinner" style="display: none"><img src="/Neck/resources/spinner.gif"/><br> Processing, please wait.</div>
+<div id="overlay" style="display: none"> </div>
 <br>
 <input class="btn" type="submit" value="Begin">
 <br>
