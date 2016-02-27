@@ -58,7 +58,7 @@
 		<div class="gray">
 		<c:if test="${not empty timeStamp}">
 		<input type="hidden" name="timeStamp" value="${timeStamp}">
-		<p> new Time Stamp is <b><a style="color:green">  ${timeStamp}  </a></b> field.<br> (Choose its format e.g.: "UNIX", "ISO8601", "dd/MMM/yyyy:HH:mm:ss":
+		<p> new Time Stamp is    <b><a style="color:green"><u>${timeStamp}</u></a></b>    field.<br> (Choose its format e.g.: "UNIX", "ISO8601", "dd/MMM/yyyy:HH:mm:ss":
 			<input type="text" name="timeStampFormat" value="ISO8601" autofocus = "autofocus" required = "required">
 			)
 		</p>
@@ -71,7 +71,7 @@
 		<table class="table1">
 		<tr><td><b> Original name </b></td><td><b> Your name </b></td></tr>	
 			<c:forEach var="item" items="${renameList}">
-				<tr> <td>${item}</td> <td> <input type="text" name="${item}"></td> </tr>
+				<tr> <td>${item}</td> <td> <input type="text" name="${item}" required = "required"></td> </tr>
 				<input type="hidden" name="rename" value="${item}">
 			</c:forEach>
 		</table>

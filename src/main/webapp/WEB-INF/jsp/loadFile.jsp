@@ -21,6 +21,9 @@
 <input type="file" name="filesToUpload" multiple="multiple">
 <br>
 <br>
+<a>(or)</a>
+<br>
+<br>
 <input class="btn" type="submit" name="chooseFile" value="Choose stored file">
 <br>
 <br>
