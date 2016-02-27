@@ -30,6 +30,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 @Controller
 @SpringBootApplication
 @EnableAsync
@@ -226,24 +228,21 @@ public class LoadFIleController {
     
     public void getAtts(TreeSet<String> attributes, File f) throws IOException{
     	BufferedReader br = Files.newBufferedReader(f.toPath(), Charset.forName("ISO-8859-1")); 
-		String line = br.readLine();   	
+    	
+    	ObjectMapper objectMapper = new ObjectMapper();
+    	String line = br.readLine();
+    	byte[] mapData = line.getBytes();   	
 		int i = 0;
-		while (line != null && i<=1000) {        		        		
-			ArrayList<String> names = new ArrayList<>();
-			List<String> temp = Arrays.asList(line.split("\":"));
-			for (String s: temp){
-				List<String> temp2 = Arrays.asList(s.split(","));
-				names.add(temp2.get(temp2.size()-1));            	
-			}
-			names.remove(names.size()-1);
-			ArrayList<String> names2 = new ArrayList<>();
-			for (String s : names){
-				names2.add(s.split("\"")[1]);
-			}
-			attributes.addAll(names2); 
-			line = br.readLine();        		
+
+		while (line != null || i<1000){
+			Map<String,String> myMap = new HashMap<String, String>();
+			myMap = objectMapper.readValue(mapData, HashMap.class);
+			attributes.addAll(myMap.keySet());
+			line = br.readLine();
+			if (line != null) mapData = line.getBytes(); 
 			i++;
 		}
+
     }
     
 }
