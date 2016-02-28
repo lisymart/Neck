@@ -1,4 +1,4 @@
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@ page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html>
@@ -71,7 +71,7 @@
 		<table class="table1">
 		<tr><td><b> Original name </b></td><td><b> Your name </b></td></tr>	
 			<c:forEach var="item" items="${renameList}">
-				<tr> <td>${item}</td> <td> <input type="text" name="${item}" required = "required"></td> </tr>
+				<tr> <td>${item}</td> <td> <input type="text" name="${item}"></td> </tr>
 				<input type="hidden" name="rename" value="${item}">
 			</c:forEach>
 		</table>
