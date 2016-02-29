@@ -12,7 +12,7 @@
 <div id="center">
 <h1> Neck </h1>
 <br>
-<h4> You can upload multiple files to process here.<br> But please, upload files of the same type.<br> Supported are .pcap .log and .csv </h4>
+<h4> You can upload multiple files to process here.<br> But please, upload files of the same type.<br> Supported are .pcap and .log </h4>
 <form action="/Neck/loadFile" method="POST" enctype="multipart/form-data" onsubmit="ShowLoading()">
 <input type="hidden" name="ES" value="${ES}">
 <img src="${pageContext.request.contextPath}/resources/spinner.gif" style="display: none;" id="loading_image">

@@ -132,7 +132,7 @@ public class LoadFIleController {
                 modelPcap.put("attributesList", attributesPcap);
                 
                 return new ModelAndView("showOptions", modelPcap);
-            case "csv": 
+            //case "csv": 
             case "log":
             	TreeSet<String> attributes;
             	if (stored) {

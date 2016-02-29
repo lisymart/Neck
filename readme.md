@@ -7,9 +7,9 @@ export PATH=$PATH:$LOGSTASH_HOME/bin
 export BRO_HOME=/dir/bro  
 export PATH=$PATH:$BRO_HOME/bin  
 
-Prerequisites to run this app : Java 7, Maven  
+Prerequisites to run this app : Java 8, Maven  
 
-`$ sudo apt-get install oracle-java7-installer`  
+`$ sudo apt-get install oracle-java8-installer`  
 `$ sudo apt-get install maven`  
 
 then execute `$ mvn tomcat7:run` to run the app  

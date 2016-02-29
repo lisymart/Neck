@@ -13,7 +13,7 @@
 <form action="/Neck/index" method="POST" onsubmit="ShowLoading()"> 
 <a> Welcome to Neck web application. </a>
 <br>
-<a> Through this app you can upload pcap, csv and log files to Elasticsearch. </a>
+<a> Through this app you can upload pcap and log files to Elasticsearch. </a>
 <br>
 <a> Applications Logstash and Bro are necessary to be installed to use this app. </a>
 <br>
