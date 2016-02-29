@@ -47,6 +47,7 @@ public class ShowOptionsController {
     														throws IOException, InterruptedException{
     	TreeSet<String> fileNames = new TreeSet<>(Arrays.asList(request.getParameterValues("fileNames")));
     	TreeSet<String> params = new TreeSet<>();
+    	params.addAll(Arrays.asList("message", "@version", "host", "path"));
         TreeSet<String> rename = new TreeSet<>();
         TreeSet<String> delete = new TreeSet<>();
         TreeSet<String> uppercase = new TreeSet<>();
@@ -67,7 +68,7 @@ public class ShowOptionsController {
         	delete = new TreeSet<>(Arrays.asList(request.getParameterValues("delete")));
         }
         if (null != request.getParameterValues("params")) {
-        	params = new TreeSet<>(Arrays.asList(request.getParameterValues("params")));
+        	params.addAll(Arrays.asList(request.getParameterValues("params")));
         }
         if (null != request.getParameterValues("timeStamp")) {
         	timeStamp = request.getParameterValues("timeStamp")[0];
