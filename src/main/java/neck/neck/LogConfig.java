@@ -10,10 +10,11 @@ import java.util.TreeSet;
 
 public class LogConfig {
     private File config;
+    private double offset = 0.0000000001;
 
 
 
-    public LogConfig(String host, String confName, String timeStamp, TreeMap<String, String> renaming, TreeMap<String, String[]> ranging, TreeSet<String> delete, TreeSet<String> uppercase, 
+    public LogConfig(String host, String confName, String timeStamp, TreeMap<String, String> renaming, TreeMap<String, double[]> ranging, TreeSet<String> delete, TreeSet<String> uppercase, 
     		TreeSet<String> lowercase, TreeSet<String> anonymize, String annmAlgo, String addition) throws FileNotFoundException, UnsupportedEncodingException {
     	PrintWriter writerSh = new PrintWriter(confName, "UTF-8");     
         writerSh.println("input { stdin {} }");
@@ -104,10 +105,12 @@ public class LogConfig {
         	boolean isFirst = true;
         	for (String s: ranging.keySet()){
         		if (isFirst) {
-        			writerSh.println("\"" + s + "\", " + ranging.get(s)[0] + ", " + ranging.get(s)[1] + ", " + "\"drop\"");
+        			writerSh.println("\"" + s + "\", " + Integer.MIN_VALUE + ", " + (ranging.get(s)[0] - offset) + ", " + "\"drop\"");
+        			writerSh.println(",\"" + s + "\", " + (ranging.get(s)[1] + offset) + ", " + Integer.MAX_VALUE + ", " + "\"drop\"");
         			isFirst = false;
         		} else {
-        			writerSh.println(",\"" + s + "\", " + ranging.get(s)[0] + ", " + ranging.get(s)[1] + ", " + "\"drop\"");
+        			writerSh.println(",\"" + s + "\", " + Integer.MIN_VALUE + ", " + (ranging.get(s)[0] - offset) + ", " + "\"drop\"");
+        			writerSh.println(",\"" + s + "\", " + (ranging.get(s)[1] + offset) + ", " + Integer.MAX_VALUE + ", " + "\"drop\"");
         		}
         	}
         	writerSh.println("]}");

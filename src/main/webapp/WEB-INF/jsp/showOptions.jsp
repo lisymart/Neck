@@ -86,7 +86,7 @@
 		<table class="table1">
 		<tr><td><b> Attribute </b></td><td colspan="2"><b> Ranges </b></td></tr>	
 			<c:forEach var="item" items="${rangeList}">
-				<tr> <td>${item}</td> <td> from: <input type="number" name="${item}from"> </td> <td> to: <input type="number" name="${item}to"></td> </tr>
+				<tr> <td>${item}</td> <td> from: <input type="text" name="${item}from"> </td> <td> to: <input type="text" name="${item}to"></td> </tr>
 				<input type="hidden" name="range" value="${item}">
 			</c:forEach>
 		</table>

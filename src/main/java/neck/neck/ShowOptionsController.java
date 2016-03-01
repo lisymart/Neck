@@ -91,6 +91,7 @@ public class ShowOptionsController {
         	params.addAll(anonymize);
             params.addAll(uppercase);
             params.addAll(lowercase);
+            params.addAll(range);
             if (timeStamp!= null) params.add(timeStamp);
             params.addAll(delete);
             params.addAll(rename);
@@ -100,6 +101,7 @@ public class ShowOptionsController {
             timeStamp = null;
             delete.clear();
             rename.clear();
+            range.clear();
         }
         
         if (rnmParam != null) {
@@ -167,10 +169,10 @@ public class ShowOptionsController {
             	renaming.put(s, request.getParameter(s));
             }
             
-            TreeMap<String, String[]> ranging = new TreeMap<>();
+            TreeMap<String, double[]> ranging = new TreeMap<>();
             for (String s : range){
             	if (request.getParameter(s + "from") != "" && request.getParameter(s + "to") != "") {
-            		String[] rng = {request.getParameter(s + "from"), request.getParameter(s + "to")};
+            		double[] rng = {Double.parseDouble(request.getParameter(s + "from")), Double.parseDouble(request.getParameter(s + "to"))};
             		ranging.put(s, rng);
             	}
             }
