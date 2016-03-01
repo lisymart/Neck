@@ -13,7 +13,7 @@ public class LogConfig {
 
 
 
-    public LogConfig(String host, String confName, String timeStamp, TreeMap<String, String> renaming, TreeSet<String> delete, TreeSet<String> uppercase, 
+    public LogConfig(String host, String confName, String timeStamp, TreeMap<String, String> renaming, TreeMap<String, String[]> ranging, TreeSet<String> delete, TreeSet<String> uppercase, 
     		TreeSet<String> lowercase, TreeSet<String> anonymize, String annmAlgo, String addition) throws FileNotFoundException, UnsupportedEncodingException {
     	PrintWriter writerSh = new PrintWriter(confName, "UTF-8");     
         writerSh.println("input { stdin {} }");
@@ -96,6 +96,21 @@ public class LogConfig {
         	writerSh.println("]");
         	writerSh.println("key => \"ThisIsMyHashingKey\"");
         	writerSh.println("}");
+        }
+        
+        if(!ranging.isEmpty()){
+        	writerSh.print("range { ");
+        	writerSh.print("ranges => [");
+        	boolean isFirst = true;
+        	for (String s: ranging.keySet()){
+        		if (isFirst) {
+        			writerSh.println("\"" + s + "\", " + ranging.get(s)[0] + ", " + ranging.get(s)[1] + ", " + "\"drop\"");
+        			isFirst = false;
+        		} else {
+        			writerSh.println(",\"" + s + "\", " + ranging.get(s)[0] + ", " + ranging.get(s)[1] + ", " + "\"drop\"");
+        		}
+        	}
+        	writerSh.println("]}");
         }
         
         if (addition != null){

@@ -126,6 +126,7 @@ public class LoadFIleController {
                 } else {
                 	modelPcap.put("stored", "new");
                 }
+                attributesPcap.addAll(Arrays.asList("message", "@version", "host", "path"));
                 modelPcap.put("store", save);
                 modelPcap.put("ES", ES);
                 modelPcap.put("fileNames", fileNames);
@@ -151,6 +152,7 @@ public class LoadFIleController {
                 } else {
                 	model.put("stored", "single");
                 }
+                attributes.addAll(Arrays.asList("message", "@version", "host", "path"));
                 model.put("store", save);
                 model.put("ES", ES);
                 model.put("fileNames", fileNames);

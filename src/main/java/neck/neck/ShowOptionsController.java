@@ -37,6 +37,7 @@ public class ShowOptionsController {
     @RequestMapping(value = "/showOptions", method = RequestMethod.POST)
 	public ModelAndView restore(HttpServletRequest request, @RequestParam(value="restore", required=false) String restoreParam, 
             												@RequestParam(value="rnm", required=false) String rnmParam,
+            												@RequestParam(value="rng", required=false) String rngParam,
 															@RequestParam(value="ts", required=false) String tsParam,
 															@RequestParam(value="uc", required=false) String ucParam,
 															@RequestParam(value="lc", required=false) String lcParam,
@@ -47,8 +48,8 @@ public class ShowOptionsController {
     														throws IOException, InterruptedException{
     	TreeSet<String> fileNames = new TreeSet<>(Arrays.asList(request.getParameterValues("fileNames")));
     	TreeSet<String> params = new TreeSet<>();
-    	params.addAll(Arrays.asList("message", "@version", "host", "path"));
         TreeSet<String> rename = new TreeSet<>();
+        TreeSet<String> range = new TreeSet<>();
         TreeSet<String> delete = new TreeSet<>();
         TreeSet<String> uppercase = new TreeSet<>();
         TreeSet<String> lowercase = new TreeSet<>();
@@ -63,6 +64,9 @@ public class ShowOptionsController {
         
         if (null != request.getParameterValues("rename")) {
         	rename = new TreeSet<>(Arrays.asList(request.getParameterValues("rename")));
+        }
+        if (null != request.getParameterValues("range")) {
+        	range = new TreeSet<>(Arrays.asList(request.getParameterValues("range")));
         }
         if (null != request.getParameterValues("delete")) {
         	delete = new TreeSet<>(Arrays.asList(request.getParameterValues("delete")));
@@ -102,6 +106,14 @@ public class ShowOptionsController {
             if (null != checked){
             	for (String att : checked){
             		rename.add(att);
+            	}
+            }
+        }
+        
+        if (rngParam != null) {
+            if (null != checked){
+            	for (String att : checked){
+            		range.add(att);
             	}
             }
         }
@@ -154,10 +166,19 @@ public class ShowOptionsController {
             	if (request.getParameter(s) != "")
             	renaming.put(s, request.getParameter(s));
             }
+            
+            TreeMap<String, String[]> ranging = new TreeMap<>();
+            for (String s : range){
+            	if (request.getParameter(s + "from") != "" && request.getParameter(s + "to") != "") {
+            		String[] rng = {request.getParameter(s + "from"), request.getParameter(s + "to")};
+            		ranging.put(s, rng);
+            	}
+            }
+            
             String ts = timeStamp + "->" + request.getParameter("timeStampFormat");
             String annmAlgo = request.getParameter("annmAlgo");
             Date date = new Date();
-            LogConfig confFile= new LogConfig(ES, hourFormat.format(date) + ".conf", ts, renaming, delete, uppercase, lowercase, anonymize, annmAlgo, addition);
+            LogConfig confFile= new LogConfig(ES, hourFormat.format(date) + ".conf", ts, renaming, ranging, delete, uppercase, lowercase, anonymize, annmAlgo, addition);
             String configPath = confFile.getConfig(hourFormat.format(date) + ".conf").getAbsolutePath();
             
             if (stored.contains("stored")){
@@ -246,6 +267,7 @@ public class ShowOptionsController {
         if (!delete.isEmpty()) model.put("deleteList", delete);
         if (!fileNames.isEmpty()) model.put("fileNames", fileNames);
         if (!rename.isEmpty()) model.put("renameList", rename);
+        if (!range.isEmpty()) model.put("rangeList", range);
         if (!params.isEmpty())model.put("attributesList", params);
         return new ModelAndView("showOptions", model);
     }

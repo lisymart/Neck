@@ -34,6 +34,7 @@
 		<input class="btn" name="annm" type="submit" value="Anonymize">
 		<input class="btn" name="dlt" type="submit" value="Delete">
 		<input class="btn" name="rnm" type="submit" value="Rename">
+		<input class="btn" name="rng" type="submit" value="Range">
 		<input class="btn" name="ts" type="submit" value="TimeStamp">
 		<input class="btn" name="lc" type="submit" value="LowerCase">
 		<input class="btn" name="uc" type="submit" value="UpperCase">
@@ -48,6 +49,7 @@
 		<input class="btn" name="annm" type="submit" value="Anonymize">
 		<input class="btn" name="dlt" type="submit" value="Delete">
 		<input class="btn" name="rnm" type="submit" value="Rename">
+		<input class="btn" name="rng" type="submit" value="Range">
 		<input class="btn" name="ts" type="submit" value="TimeStamp">
 		<input class="btn" name="lc" type="submit" value="LowerCase">
 		<input class="btn" name="uc" type="submit" value="UpperCase">
@@ -73,6 +75,19 @@
 			<c:forEach var="item" items="${renameList}">
 				<tr> <td>${item}</td> <td> <input type="text" name="${item}"></td> </tr>
 				<input type="hidden" name="rename" value="${item}">
+			</c:forEach>
+		</table>
+		</c:if>
+		</div>
+		<br>
+		<div class="gray">
+		<c:if test="${not empty rangeList}">
+		<h4> Ranges set: </h4>
+		<table class="table1">
+		<tr><td><b> Attribute </b></td><td colspan="2"><b> Ranges </b></td></tr>	
+			<c:forEach var="item" items="${rangeList}">
+				<tr> <td>${item}</td> <td> from: <input type="number" name="${item}from"> </td> <td> to: <input type="number" name="${item}to"></td> </tr>
+				<input type="hidden" name="range" value="${item}">
 			</c:forEach>
 		</table>
 		</c:if>
