@@ -20,8 +20,11 @@ public class LogConfig {
         writerSh.println("input { stdin {} }");
         writerSh.println("filter { ");
         writerSh.println("json {source => \"message\"}");
-        String[] ts = timeStamp.split("->");
-        writerSh.println("date { match => [\"" + ts[0] + "\", \"" + ts[1] + "\"] remove_field => [\"" + ts[0] + "\"] }");
+        
+        if (!timeStamp.contains("null")) {
+        	String[] ts = timeStamp.split("->");
+        	writerSh.println("date { match => [\"" + ts[0] + "\", \"" + ts[1] + "\"] remove_field => [\"" + ts[0] + "\"] }");
+        }
         
         if (!renaming.isEmpty()) {
         	writerSh.println("mutate { ");
