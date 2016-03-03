@@ -39,10 +39,10 @@
 		<input class="btn" name="lc" type="submit" value="LowerCase">
 		<input class="btn" name="uc" type="submit" value="UpperCase">
 		<br>
-		<input type="checkbox" name="allCheck" onClick="selectallMe()">  select all
+		<label><input type="checkbox" name="allCheck" onClick="selectallMe()">  select all </label>
 		<ul class="params">
 			<c:forEach var="item" items="${attributesList}">
-				<li> <input type="checkbox" name="checked" value="${item}" onClick="selectall()"> ${item} </label></li>
+				<li> <label><input type="checkbox" name="checked" value="${item}" onClick="selectall()"> ${item} </label></li>
 				<input type="hidden" name="params" value="${item}">
 			</c:forEach>
 			<li> <input type="checkbox" name="checked" value="host" onClick="selectall()"> host 
