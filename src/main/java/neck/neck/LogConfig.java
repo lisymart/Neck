@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
@@ -14,7 +15,7 @@ public class LogConfig {
 
 
 
-    public LogConfig(String host, String confName, String timeStamp, TreeMap<String, String> renaming, TreeMap<String, double[]> ranging, TreeSet<String> delete, TreeSet<String> uppercase, 
+    public LogConfig(String host, String confName, String timeStamp, TreeMap<String, String> renaming, TreeMap<String, ArrayList<String>> ranging, TreeSet<String> delete, TreeSet<String> uppercase, 
     		TreeSet<String> lowercase, TreeSet<String> anonymize, String annmAlgo, String addition) throws FileNotFoundException, UnsupportedEncodingException {
     	PrintWriter writerSh = new PrintWriter(confName, "UTF-8");     
         writerSh.println("input { stdin {} }");
@@ -106,14 +107,33 @@ public class LogConfig {
         	writerSh.print("range { ");
         	writerSh.print("ranges => [");
         	boolean isFirst = true;
+        	
         	for (String s: ranging.keySet()){
-        		if (isFirst) {
-        			writerSh.println("\"" + s + "\", " + Integer.MIN_VALUE + ", " + (ranging.get(s)[0] - offset) + ", " + "\"drop\"");
-        			writerSh.println(",\"" + s + "\", " + (ranging.get(s)[1] + offset) + ", " + Integer.MAX_VALUE + ", " + "\"drop\"");
-        			isFirst = false;
-        		} else {
-        			writerSh.println(",\"" + s + "\", " + Integer.MIN_VALUE + ", " + (ranging.get(s)[0] - offset) + ", " + "\"drop\"");
-        			writerSh.println(",\"" + s + "\", " + (ranging.get(s)[1] + offset) + ", " + Integer.MAX_VALUE + ", " + "\"drop\"");
+        		String lowerBound =  ranging.get(s).get(0);
+        		String upperBound = ranging.get(s).get(1);
+        		
+        		if (lowerBound != "" && upperBound != ""){
+        			if (isFirst) {
+            			writerSh.println("\"" + s + "\", " +Long.MIN_VALUE + ", " + (Double.parseDouble(lowerBound) - offset) + ", " + "\"drop\"");
+            			writerSh.println(",\"" + s + "\", " + (Double.parseDouble(upperBound) + offset) + ", " + Long.MAX_VALUE + ", " + "\"drop\"");
+            			isFirst = false;
+            		} else {
+            			writerSh.println(",\"" + s + "\", " + Long.MIN_VALUE + ", " + (Double.parseDouble(lowerBound) - offset) + ", " + "\"drop\"");
+            			writerSh.println(",\"" + s + "\", " + (Double.parseDouble(upperBound) + offset) + ", " + Long.MAX_VALUE + ", " + "\"drop\"");
+            		}
+        		} else if(lowerBound == "") {
+        			if(isFirst){
+        				writerSh.println("\"" + s + "\", " + (Double.parseDouble(upperBound) + offset) + ", " + Long.MAX_VALUE + ", " + "\"drop\"");
+        				isFirst = false;
+        			} else  {
+        				writerSh.println(",\"" + s + "\", " + (Double.parseDouble(upperBound) + offset) + ", " + Long.MAX_VALUE + ", " + "\"drop\"");
+        			}
+        		} else if (upperBound == "") {
+        			if (isFirst) {
+        				writerSh.println("\"" + s + "\", " +Long.MIN_VALUE + ", " + (Double.parseDouble(lowerBound) - offset) + ", " + "\"drop\"");
+        			} else {
+        				writerSh.println(",\"" + s + "\", " +Long.MIN_VALUE + ", " + (Double.parseDouble(lowerBound) - offset) + ", " + "\"drop\"");
+        			}
         		}
         	}
         	writerSh.println("]}");

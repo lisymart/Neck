@@ -49,7 +49,9 @@ public class ShowOptionsController {
     	TreeSet<String> fileNames = new TreeSet<>(Arrays.asList(request.getParameterValues("fileNames")));
     	TreeSet<String> params = new TreeSet<>();
         TreeSet<String> rename = new TreeSet<>();
+        TreeMap<String, String> renaming = new TreeMap<>();
         TreeSet<String> range = new TreeSet<>();
+    	TreeMap<String, ArrayList<String>> ranging = new TreeMap<>();
         TreeSet<String> delete = new TreeSet<>();
         TreeSet<String> uppercase = new TreeSet<>();
         TreeSet<String> lowercase = new TreeSet<>();
@@ -64,9 +66,17 @@ public class ShowOptionsController {
         
         if (null != request.getParameterValues("rename")) {
         	rename = new TreeSet<>(Arrays.asList(request.getParameterValues("rename")));
+        	for (String s: rename){
+        		renaming.put(s, request.getParameter("rnm" + s));
+        	}
         }
         if (null != request.getParameterValues("range")) {
         	range = new TreeSet<>(Arrays.asList(request.getParameterValues("range")));
+        	for (String s: range){
+        		ArrayList<String> tmp = new ArrayList<>();
+        		tmp.addAll(Arrays.asList(request.getParameterValues("rng" + s)));
+        		ranging.put(s, tmp);
+        	}
         }
         if (null != request.getParameterValues("delete")) {
         	delete = new TreeSet<>(Arrays.asList(request.getParameterValues("delete")));
@@ -88,13 +98,8 @@ public class ShowOptionsController {
         }
          
         if (restoreParam != null) {
-        	params.addAll(anonymize);
-            params.addAll(uppercase);
-            params.addAll(lowercase);
-            params.addAll(range);
             if (timeStamp!= null) params.add(timeStamp);
             params.addAll(delete);
-            params.addAll(rename);
             anonymize.clear();
             uppercase.clear();
             lowercase.clear();
@@ -109,6 +114,9 @@ public class ShowOptionsController {
             	for (String att : checked){
             		rename.add(att);
             	}
+            	for (String s : rename){
+                	renaming.put(s, request.getParameter("rnm" + s));
+                }
             }
         }
         
@@ -117,6 +125,12 @@ public class ShowOptionsController {
             	for (String att : checked){
             		range.add(att);
             	}
+                for (String s : range){
+               		ArrayList<String> rng = new ArrayList<>();
+               		if (null != request.getParameterValues("rng" + s))
+               		rng.addAll(Arrays.asList(request.getParameterValues("rng" + s)));
+               		ranging.put(s, rng);
+                }
             }
         }
         
@@ -126,6 +140,7 @@ public class ShowOptionsController {
             		delete.add(att);
             	}
             }
+            if (checked != null) params.removeAll(Arrays.asList(checked));
         }
         
         if (tsParam != null) {
@@ -136,6 +151,7 @@ public class ShowOptionsController {
             	timeStamp = checked[0];
             	params.remove(timeStamp);
             }
+            if (checked != null) params.removeAll(Arrays.asList(checked));
         }
         
         if (ucParam != null) {
@@ -163,23 +179,11 @@ public class ShowOptionsController {
         }
         
         if (uploadParam != null) {
-        	TreeMap<String, String> renaming = new TreeMap<String, String>();
-            for (String s : rename){
-            	if (request.getParameter(s) != "")
-            	renaming.put(s, request.getParameter(s));
-            }
-            
-            TreeMap<String, double[]> ranging = new TreeMap<>();
-            for (String s : range){
-            	if (request.getParameter(s + "from") != "" && request.getParameter(s + "to") != "") {
-            		double[] rng = {Double.parseDouble(request.getParameter(s + "from")), Double.parseDouble(request.getParameter(s + "to"))};
-            		ranging.put(s, rng);
-            	}
-            }
-            
             String ts = timeStamp + "->" + request.getParameter("timeStampFormat");
             String annmAlgo = request.getParameter("annmAlgo");
+            TreeMap<String, double[]> rngs = new TreeMap<>();
             Date date = new Date();
+            
             LogConfig confFile= new LogConfig(ES, hourFormat.format(date) + ".conf", ts, renaming, ranging, delete, uppercase, lowercase, anonymize, annmAlgo, addition);
             String configPath = confFile.getConfig(hourFormat.format(date) + ".conf").getAbsolutePath();
             
@@ -256,7 +260,7 @@ public class ShowOptionsController {
             return new ModelAndView("success", "ES", ES);
         }
         
-        if (checked != null) params.removeAll(Arrays.asList(checked));
+        params.removeAll(Arrays.asList("@version", "host", "message", "path"));
         Map<String, Object> model = new HashMap<>();
         model.put("store", store);
         model.put("stored", stored);
@@ -268,8 +272,8 @@ public class ShowOptionsController {
         if (timeStamp != null) model.put("timeStamp", timeStamp);
         if (!delete.isEmpty()) model.put("deleteList", delete);
         if (!fileNames.isEmpty()) model.put("fileNames", fileNames);
-        if (!rename.isEmpty()) model.put("renameList", rename);
-        if (!range.isEmpty()) model.put("rangeList", range);
+        if (!rename.isEmpty()) model.put("renameList", renaming);
+        if (!range.isEmpty()) model.put("rangeList", ranging);
         if (!params.isEmpty())model.put("attributesList", params);
         return new ModelAndView("showOptions", model);
     }

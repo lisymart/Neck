@@ -42,10 +42,20 @@
 		<input type="checkbox" name="allCheck" onClick="selectallMe()">  select all
 		<ul class="params">
 			<c:forEach var="item" items="${attributesList}">
-				<li> <input type="checkbox" name="checked" value="${item}" onClick="selectall()"> ${item} </li>
+				<li> <input type="checkbox" name="checked" value="${item}" onClick="selectall()"> ${item} </label></li>
 				<input type="hidden" name="params" value="${item}">
 			</c:forEach>
+			<li> <input type="checkbox" name="checked" value="host" onClick="selectall()"> host 
+			<input type="hidden" name="params" value="host"> </li>
+			<li> <input type="checkbox" name="checked" value="message" onClick="selectall()"> message 
+			<input type="hidden" name="params" value="message"> </li>
+			<li> <input type="checkbox" name="checked" value="path" onClick="selectall()"> path 
+			<input type="hidden" name="params" value="path"> </li>
+			<li> <input type="checkbox" name="checked" value="@version" onClick="selectall()"> @version
+			<input type="hidden" name="params" value="@version"> </li>
 		</ul>
+		<a> Last 4 values are automatically added by ES. You can modify them too. </a>
+		<br>
 		<input class="btn" name="annm" type="submit" value="Anonymize">
 		<input class="btn" name="dlt" type="submit" value="Delete">
 		<input class="btn" name="rnm" type="submit" value="Rename">
@@ -73,8 +83,8 @@
 		<table class="table1">
 		<tr><td><b> Original name </b></td><td><b> Your name </b></td></tr>	
 			<c:forEach var="item" items="${renameList}">
-				<tr> <td>${item}</td> <td> <input type="text" name="${item}"></td> </tr>
-				<input type="hidden" name="rename" value="${item}">
+				<tr> <td>${item.key}</td> <td> <input type="text" name="rnm${item.key}" value="${item.value}"></td> </tr>
+				<input type="hidden" name="rename" value="${item.key}">
 			</c:forEach>
 		</table>
 		</c:if>
@@ -85,9 +95,20 @@
 		<h4> Ranges set: </h4>
 		<table class="table1">
 		<tr><td><b> Attribute </b></td><td colspan="2"><b> Ranges </b></td></tr>	
+		<tr><td></td><td>from (empty = -inf)</td><td>to (empty = +inf)</td></tr>
 			<c:forEach var="item" items="${rangeList}">
-				<tr> <td>${item}</td> <td> from: <input type="text" name="${item}from"> </td> <td> to: <input type="text" name="${item}to"></td> </tr>
-				<input type="hidden" name="range" value="${item}">
+				<input type="hidden" name="range" value="${item.key}">
+				<tr> <td>${item.key}</td>
+				<c:if test="${not empty item.value}">
+					<c:forEach var="i" items="${item.value}">
+						<td> <input type="text" name="rng${item.key}" value = "${i}"> </td>
+					</c:forEach>
+				</c:if>
+				<c:if test="${empty item.value}">
+					<td> <input type="text" name="rng${item.key}"> </td>
+					<td> <input type="text" name="rng${item.key}"> </td>
+				</c:if>				
+				</tr>
 			</c:forEach>
 		</table>
 		</c:if>

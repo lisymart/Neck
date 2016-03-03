@@ -8,8 +8,11 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -38,6 +41,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class LoadFIleController {
 	@Autowired
     BroProcessService bps;
+	
+	private DateFormat hourFormat = new SimpleDateFormat("YYYY-mm-dd-HH-mm-ssss");
 
     @ResponseBody    
     @RequestMapping(value = "/loadFile", method = RequestMethod.POST, params="continue")
@@ -49,6 +54,7 @@ public class LoadFIleController {
     	String ES = request.getParameter("ES");
     	String filetype = null;
     	boolean stored=false;
+    	Date date = new Date();
 
     	for (MultipartFile file: filesToUpload){
 			String name = file.getOriginalFilename();
@@ -77,8 +83,8 @@ public class LoadFIleController {
     		if (!uploads.exists()) uploads.mkdirs();
     	
     		for (MultipartFile file : filesToUpload){
-    			fileNames.add(file.getOriginalFilename());
-    			BufferedOutputStream stream = new BufferedOutputStream(new FileOutputStream(new File("data/uploads/" + file.getOriginalFilename())));
+    			fileNames.add(hourFormat.format(date)+ "-" +file.getOriginalFilename());
+    			BufferedOutputStream stream = new BufferedOutputStream(new FileOutputStream(new File("data/uploads/" + hourFormat.format(date)+ "-" +  file.getOriginalFilename())));
     			stream.write(file.getBytes());
     			stream.close();
     		}
@@ -134,7 +140,7 @@ public class LoadFIleController {
                 
                 return new ModelAndView("showOptions", modelPcap);
             //case "csv": 
-            case "log":
+            case "log": case "txt": case "json":
             	TreeSet<String> attributes;
             	if (stored) {
             		attributes = showAttributes(fileNames, "stored");
@@ -152,7 +158,6 @@ public class LoadFIleController {
                 } else {
                 	model.put("stored", "single");
                 }
-                attributes.addAll(Arrays.asList("message", "@version", "host", "path"));
                 model.put("store", save);
                 model.put("ES", ES);
                 model.put("fileNames", fileNames);
