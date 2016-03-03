@@ -33,6 +33,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Controller
@@ -142,12 +143,16 @@ public class LoadFIleController {
             //case "csv": 
             case "log": case "txt": case "json":
             	TreeSet<String> attributes;
+            	try {
             	if (stored) {
             		attributes = showAttributes(fileNames, "stored");
             	} else {
-            		attributes = showAttributes(fileNames, "uploads");
+           			attributes = showAttributes(fileNames, "uploads");
             	}
-                Map <String, Object> model = new HashMap<>();
+            	} catch (JsonParseException ex) {
+        			return new ModelAndView("loadFile", "message", "Uploaded file is not in json format!");
+        		}
+            	Map <String, Object> model = new HashMap<>();
                 if (null == store) {
                 	save = "delete";
                 } else {
