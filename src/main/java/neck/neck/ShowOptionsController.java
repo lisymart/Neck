@@ -35,7 +35,7 @@ public class ShowOptionsController {
 	private DateFormat hourFormat = new SimpleDateFormat("HH-mm-ssss");
     
     @RequestMapping(value = "/showOptions", method = RequestMethod.POST)
-	public ModelAndView restore(HttpServletRequest request, @RequestParam(value="restore", required=false) String restoreParam, 
+	public ModelAndView showOptions(HttpServletRequest request, @RequestParam(value="restore", required=false) String restoreParam, 
             												@RequestParam(value="rnm", required=false) String rnmParam,
             												@RequestParam(value="rng", required=false) String rngParam,
 															@RequestParam(value="ts", required=false) String tsParam,
@@ -63,6 +63,8 @@ public class ShowOptionsController {
         String ES = request.getParameter("ES");
         String timeStamp = null;
         String message = null;
+        String hashingKey = null;
+        String tsFormat = null;
         
         if (null != request.getParameterValues("rename")) {
         	rename = new TreeSet<>(Arrays.asList(request.getParameterValues("rename")));
@@ -86,6 +88,7 @@ public class ShowOptionsController {
         }
         if (null != request.getParameterValues("timeStamp")) {
         	timeStamp = request.getParameterValues("timeStamp")[0];
+       		tsFormat = request.getParameter("timeStampFormat");
         }
         if (null != request.getParameterValues("uppercase")) {
         	uppercase = new TreeSet<>(Arrays.asList(request.getParameterValues("uppercase")));
@@ -95,6 +98,7 @@ public class ShowOptionsController {
         }
         if (null != request.getParameterValues("anonym")) {
         	anonymize = new TreeSet<>(Arrays.asList(request.getParameterValues("anonym")));
+       		hashingKey = request.getParameter("hashingKey");
         }
          
         if (restoreParam != null) {
@@ -151,6 +155,7 @@ public class ShowOptionsController {
             	timeStamp = checked[0];
             	params.remove(timeStamp);
             }
+            if (null == request.getParameter("tsFormat")) tsFormat = "ISO8601";
             if (checked != null) params.removeAll(Arrays.asList(checked));
         }
         
@@ -167,6 +172,7 @@ public class ShowOptionsController {
             	for (String att : checked){
             		anonymize.add(att);
             	}
+            	if (null == request.getParameter("hashingKey")) hashingKey = "HashingKey";
             }
         }
         
@@ -184,7 +190,7 @@ public class ShowOptionsController {
             TreeMap<String, double[]> rngs = new TreeMap<>();
             Date date = new Date();
             
-            LogConfig confFile= new LogConfig(ES, hourFormat.format(date) + ".conf", ts, renaming, ranging, delete, uppercase, lowercase, anonymize, annmAlgo, addition);
+            LogConfig confFile= new LogConfig(ES, hourFormat.format(date) + ".conf", ts, renaming, ranging, delete, uppercase, lowercase, anonymize, hashingKey, annmAlgo, addition);
             String configPath = confFile.getConfig(hourFormat.format(date) + ".conf").getAbsolutePath();
             
             if (stored.contains("stored")){
@@ -265,6 +271,8 @@ public class ShowOptionsController {
         model.put("store", store);
         model.put("stored", stored);
         model.put("ES", ES);
+        model.put("hashingKey", hashingKey);
+        model.put("tsFormat", tsFormat);
         if (message != null) model.put("message", message);
         if (!anonymize.isEmpty()) model.put("anonymList", anonymize);
         if (!uppercase.isEmpty()) model.put("uppercaseList", uppercase);

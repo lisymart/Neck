@@ -133,7 +133,7 @@ public class LoadFIleController {
                 } else {
                 	modelPcap.put("stored", "new");
                 }
-                attributesPcap.addAll(Arrays.asList("message", "@version", "host", "path"));
+                
                 modelPcap.put("store", save);
                 modelPcap.put("ES", ES);
                 modelPcap.put("fileNames", fileNames);

@@ -71,7 +71,7 @@
 		<c:if test="${not empty timeStamp}">
 		<input type="hidden" name="timeStamp" value="${timeStamp}">
 		<p> new Time Stamp is    <b><a style="color:green"><u>${timeStamp}</u></a></b>    field.<br> (Choose its format e.g.: "UNIX", "ISO8601", "dd/MMM/yyyy:HH:mm:ss":
-			<input type="text" name="timeStampFormat" value="ISO8601" autofocus = "autofocus" required = "required">
+			<input type="text" name="timeStampFormat" value="${tsFormat}" autofocus = "autofocus" required = "required">
 			)
 		</p>
 		</c:if>
@@ -157,6 +157,8 @@
 				<option value="SHA512"> SHA512 </option>
 				<option value="MD5"> MD5 </option>
 		</select>
+		and hashing key
+		<input type="text" name="hashingKey" value = "${hashingKey}">
 		)</h4>
 		<ul>
 			<c:forEach var="item" items="${anonymList}">
