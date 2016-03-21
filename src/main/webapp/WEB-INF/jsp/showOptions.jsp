@@ -162,7 +162,7 @@
 		)</h4>
 		<ul>
 			<c:forEach var="item" items="${anonymList}">
-				<li>	${item} <input type="hidden" name="anonym" value="${item}"> </li>
+				<li>	${item} <input type="hidden" name="anonym" value="${item}" required = "required"> </li>
 			</c:forEach>
 		</ul>
 		</c:if>
