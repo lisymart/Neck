@@ -45,13 +45,13 @@
 				<li> <label><input type="checkbox" name="checked" value="${item}" onClick="selectall()"> ${item} </label></li>
 				<input type="hidden" name="params" value="${item}">
 			</c:forEach>
-			<li> <input type="checkbox" name="checked" value="host" onClick="selectall()"> host 
+			<li> <label><input type="checkbox" name="checked" value="host" onClick="selectall()"> host </label>
 			<input type="hidden" name="params" value="host"> </li>
-			<li> <input type="checkbox" name="checked" value="message" onClick="selectall()"> message 
+			<li> <label><input type="checkbox" name="checked" value="message" onClick="selectall()"> message </label>
 			<input type="hidden" name="params" value="message"> </li>
-			<li> <input type="checkbox" name="checked" value="path" onClick="selectall()"> path 
+			<li> <label><input type="checkbox" name="checked" value="path" onClick="selectall()"> path </label>
 			<input type="hidden" name="params" value="path"> </li>
-			<li> <input type="checkbox" name="checked" value="@version" onClick="selectall()"> @version
+			<li> <label><input type="checkbox" name="checked" value="@version" onClick="selectall()"> @version </label>
 			<input type="hidden" name="params" value="@version"> </li>
 		</ul>
 		<a> Last 4 values are automatically added by ES. You can modify them too. </a>

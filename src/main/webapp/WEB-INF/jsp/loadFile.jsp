@@ -29,7 +29,7 @@
 <br>
 <div class="gray">
 		<c:if test="${not empty fileList}">
-		<h4> Previously updated files: </h4>
+		<h4> Previously uploaded files: </h4>
 		<ul class="params">	
 			<c:forEach var="item" items="${fileList}">
 				<li> <label><input type="checkbox" name="checked" value="${item}"> ${item} </label></li>
