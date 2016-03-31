@@ -56,7 +56,7 @@ public class PathsController {
         if (broLines.size() != 0){
         	List<String> broProof = new ArrayList<>();
         	for (String line : broLines.get(0).split(" ")) {broProof.add(line);}
-        	if (broProof.get(0).equals("Getting")){
+        	if (!broProof.get(1).contains("command")){
         		running.add("bro");
         	}
         }
@@ -64,7 +64,7 @@ public class PathsController {
         if (logstashLines.size() != 0){
         	List<String> logstashProof = new ArrayList<>();
         	for (String line : logstashLines.get(0).split(" ")) {logstashProof.add(line);}
-        	if (logstashProof.get(0).equals("logstash")){
+        	if (!logstashProof.get(1).contains("command")){
         		running.add("logstash");
         	}
         }
