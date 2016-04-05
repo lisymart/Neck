@@ -43,7 +43,7 @@ public class LoadFIleController {
 	@Autowired
     BroProcessService bps;
 	
-	private DateFormat hourFormat = new SimpleDateFormat("YYYY-mm-dd-HH-mm-ssss");
+	private DateFormat hourFormat = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ssss");
 
     @ResponseBody    
     @RequestMapping(value = "/loadFile", method = RequestMethod.POST, params="continue")
@@ -70,7 +70,7 @@ public class LoadFIleController {
     	if (null != request.getParameterValues("checked")){
     		checked = new TreeSet<>(Arrays.asList(request.getParameterValues("checked")));
     		for (String s: checked){
-    			fileNames.add(s);
+    			fileNames.add(convertFileName(s));
     		}
     		filetypes.clear();
     		for (String s: fileNames){
@@ -186,7 +186,8 @@ public class LoadFIleController {
     		model.put("message", "No files has been stored on server yet.");
     	} else {
     		for (File f: folder.listFiles()){
-        		names.add(f.getName());
+    			String[] temp = f.getName().split("-");
+        		names.add(temp[6] + " (" + temp[2] + "-" + temp[1] + "-" + temp[0] + " " + temp[3] + ":" + temp[4] + ":" + temp[5] + ")");
         	}
     		model.put("fileList", names);
     	}
@@ -202,10 +203,10 @@ public class LoadFIleController {
     	
     	if (null != request.getParameterValues("checked")){
     		for (String s: request.getParameterValues("checked")){
-        		names.add(s);
+        		names.add(convertFileName(s));
         	}
     		for (String s: request.getParameterValues("files")){
-    			files.add(s);
+    			files.add(convertFileName(s));
     		}
     		for (String s: names){
     			File folder = new File("data/stored/" + s);
@@ -255,6 +256,21 @@ public class LoadFIleController {
 			i++;
 		}
 
+    }
+    
+    public String convertFileName(String s){
+    	String temp1[] = s.split("\\(");
+		String fname = temp1[0].split(" ")[0];
+		String temp2[] = temp1[1].split(" ");
+		String dat[] = temp2[0].split("-");
+		String year = dat[2];
+		String month = dat[1];
+		String day = dat[0];
+		String time[] = temp2[1].split("\\)")[0].split(":");
+		String hour = time[0];
+		String minute = time[1];
+		String seconds = time[2];
+		return year + "-" + month + "-" + day + "-" + hour + "-" + minute + "-" + seconds + "-" + fname;
     }
     
 }
