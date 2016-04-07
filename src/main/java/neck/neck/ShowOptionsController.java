@@ -43,6 +43,7 @@ public class ShowOptionsController {
 															@RequestParam(value="lc", required=false) String lcParam,
 															@RequestParam(value="annm", required=false) String annmParam,
     														@RequestParam(value="dlt", required=false) String dltParam,
+    														@RequestParam(value="addn", required=false) String addNewField,
     														@RequestParam(value="uploadToES", required=false) String uploadParam,
     														@RequestParam final String addition) 
     														throws IOException, InterruptedException{
@@ -56,6 +57,7 @@ public class ShowOptionsController {
         TreeSet<String> uppercase = new TreeSet<>();
         TreeSet<String> lowercase = new TreeSet<>();
         TreeSet<String> anonymize = new TreeSet<>();
+        TreeMap<String, String> newFields = new TreeMap<>();
         List<Future<String>> results = new ArrayList<>();
     	String[] checked = request.getParameterValues("checked");
         String store = request.getParameter("store");
@@ -80,6 +82,14 @@ public class ShowOptionsController {
         		ranging.put(s, tmp);
         	}
         }
+        
+        if (null != request.getParameterValues("fn")) {
+        	ArrayList<String> newAttNames = new ArrayList<>(Arrays.asList(request.getParameterValues("fn")));
+        	for (int i=0;i < newAttNames.size();i++){
+        		newFields.put(request.getParameter("fn" + newAttNames.get(i)), request.getParameter("fv" + newAttNames.get(i)));
+        	}
+        }
+        
         if (null != request.getParameterValues("delete")) {
         	delete = new TreeSet<>(Arrays.asList(request.getParameterValues("delete")));
         }
@@ -111,6 +121,7 @@ public class ShowOptionsController {
             delete.clear();
             rename.clear();
             range.clear();
+            newFields.clear();
         }
         
         if (rnmParam != null) {
@@ -184,13 +195,22 @@ public class ShowOptionsController {
             }
         }
         
+        if(addNewField != null){
+        	if (newFields.isEmpty()){
+        		newFields.put("1", "field value");
+        	} else {
+        		int number = newFields.keySet().size() + 1;
+        		newFields.put(String.valueOf(number), "field value");
+        	}
+        }
+        
         if (uploadParam != null) {
             String ts = timeStamp + "->" + request.getParameter("timeStampFormat");
             String annmAlgo = request.getParameter("annmAlgo");
             TreeMap<String, double[]> rngs = new TreeMap<>();
             Date date = new Date();
             
-            LogConfig confFile= new LogConfig(ES, hourFormat.format(date) + ".conf", ts, renaming, ranging, delete, uppercase, lowercase, anonymize, hashingKey, annmAlgo, addition);
+            LogConfig confFile= new LogConfig(ES, hourFormat.format(date) + ".conf", ts, renaming, ranging, delete, uppercase, lowercase, anonymize, hashingKey, annmAlgo, newFields, addition);
             String configPath = confFile.getConfig(hourFormat.format(date) + ".conf").getAbsolutePath();
             
             if (stored.contains("stored")){
@@ -273,6 +293,7 @@ public class ShowOptionsController {
         model.put("ES", ES);
         model.put("hashingKey", hashingKey);
         model.put("tsFormat", tsFormat);
+        if (!newFields.isEmpty()) model.put("addFieldList", newFields);
         if (message != null) model.put("message", message);
         if (!anonymize.isEmpty()) model.put("anonymList", anonymize);
         if (!uppercase.isEmpty()) model.put("uppercaseList", uppercase);

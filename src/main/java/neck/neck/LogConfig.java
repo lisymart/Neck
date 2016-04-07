@@ -16,7 +16,7 @@ public class LogConfig {
 
 
     public LogConfig(String host, String confName, String timeStamp, TreeMap<String, String> renaming, TreeMap<String, ArrayList<String>> ranging, TreeSet<String> delete, TreeSet<String> uppercase, 
-    		TreeSet<String> lowercase, TreeSet<String> anonymize, String hashingKey, String annmAlgo, String addition) throws FileNotFoundException, UnsupportedEncodingException {
+    		TreeSet<String> lowercase, TreeSet<String> anonymize, String hashingKey, String annmAlgo, TreeMap<String, String> newFields, String addition) throws FileNotFoundException, UnsupportedEncodingException {
     	PrintWriter writerSh = new PrintWriter(confName, "UTF-8");     
         writerSh.println("input { stdin {} }");
         writerSh.println("filter { ");
@@ -137,6 +137,13 @@ public class LogConfig {
         		}
         	}
         	writerSh.println("]}");
+        }
+        if(!newFields.isEmpty()){
+        	writerSh.println("mutate { add_field => {");	
+        	for (String s : newFields.keySet()){
+        		writerSh.println("\"" + s + "\" => \"" + newFields.get(s) + "\"");
+        	}
+        	writerSh.println("} }");
         }
         
         if (addition != null){

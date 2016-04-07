@@ -30,6 +30,7 @@
 		<br>
 		<div>
 		<input class="btn" name="restore" type="submit" value="Restore">
+		<input class="btn" name="addn" type="submit" value="Add new field">
 		<br>
 		<input class="btn" name="annm" type="submit" value="Anonymize">
 		<input class="btn" name="dlt" type="submit" value="Delete">
@@ -165,6 +166,23 @@
 				<li>	${item} <input type="hidden" name="anonym" value="${item}" required = "required"> </li>
 			</c:forEach>
 		</ul>
+		</c:if>
+		</div>
+		<div class="gray">
+		<c:if test="${not empty addFieldList}">
+		<h4>Add new field:</h4>
+		<table class="table1">
+		<tr>
+			<td>field name</td><td>field value</td>
+		</tr>
+			<c:forEach var="item" items="${addFieldList}">
+				<tr>
+					<td><input type="text" name="fn${item.key}" value="${item.key}"></td>
+					<td><input type="text" name="fv${item.key}" value="${item.value}"></td>
+				</tr>
+				<input type="hidden" name="fn" value="${item.key}">
+			</c:forEach>
+		</table>
 		</c:if>
 		</div>
 		<br>
