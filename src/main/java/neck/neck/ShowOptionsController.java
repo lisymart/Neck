@@ -24,7 +24,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
-
+/*
+ * Class ShowOptionsController shows the supported transformations over the uploaded files.
+ * @author Martin Lisý 
+ */
 @Controller
 @SpringBootApplication
 @EnableAsync
@@ -34,6 +37,22 @@ public class ShowOptionsController {
 	
 	private DateFormat hourFormat = new SimpleDateFormat("HH-mm-ssss");
     
+	/*
+	 * Method showOptions defines what transformations and over which attributes are available.
+	 * @param	request			HttpServletRequest from .jsp page.
+	 * @param	restoreParam	Represents the button Restore.
+	 * @param	rnmParam		Represents the button Rename.
+	 * @param	rngParam		Represents the button Range.
+	 * @param	tsParam			Represents the button Timestamp.
+	 * @param	ucParam			Represents the button Uppercase.
+	 * @param	lcParam			Represents the button Lowercase.
+	 * @param	annmParam		Represents the button Anonymize.
+	 * @param	dltParam		Represents the button Delete.
+	 * @param	addNewField		Represents the button Add new field.
+	 * @param	uploadParam		Represents the button Upload to ES.
+	 * @param	addition		Code with specified transformation that are not supported by default in Neck.
+	 * @return	ModelAndView object within the new .jsp page.
+	 */
     @RequestMapping(value = "/showOptions", method = RequestMethod.POST)
 	public ModelAndView showOptions(HttpServletRequest request, @RequestParam(value="restore", required=false) String restoreParam, 
             												@RequestParam(value="rnm", required=false) String rnmParam,
@@ -47,6 +66,7 @@ public class ShowOptionsController {
     														@RequestParam(value="uploadToES", required=false) String uploadParam,
     														@RequestParam final String addition) 
     														throws IOException, InterruptedException{
+    	//Collections with attributes of specified transformations.
     	TreeSet<String> fileNames = new TreeSet<>(Arrays.asList(request.getParameterValues("fileNames")));
     	TreeSet<String> params = new TreeSet<>();
         TreeSet<String> rename = new TreeSet<>();
@@ -68,6 +88,7 @@ public class ShowOptionsController {
         String hashingKey = null;
         String tsFormat = null;
         
+        //Checking which attributes have been specified in previous step.
         if (null != request.getParameterValues("rename")) {
         	rename = new TreeSet<>(Arrays.asList(request.getParameterValues("rename")));
         	for (String s: rename){
@@ -110,7 +131,8 @@ public class ShowOptionsController {
         	anonymize = new TreeSet<>(Arrays.asList(request.getParameterValues("anonym")));
        		hashingKey = request.getParameter("hashingKey");
         }
-         
+        
+        //Actions performed when Restore button is pressed. All transformations are reset.
         if (restoreParam != null) {
             if (timeStamp!= null) params.add(timeStamp);
             params.addAll(delete);
@@ -124,6 +146,7 @@ public class ShowOptionsController {
             newFields.clear();
         }
         
+        //Actions performed when Rename button is pressed.
         if (rnmParam != null) {
             if (null != checked){
             	for (String att : checked){
@@ -135,6 +158,7 @@ public class ShowOptionsController {
             }
         }
         
+        //Actions performed when Range button is pressed.
         if (rngParam != null) {
             if (null != checked){
             	for (String att : checked){
@@ -148,7 +172,7 @@ public class ShowOptionsController {
                 }
             }
         }
-        
+        //Actions performed when Delete button is pressed.        
         if (dltParam != null) {
             if (null != checked){
             	for (String att : checked){
@@ -157,7 +181,8 @@ public class ShowOptionsController {
             }
             if (checked != null) params.removeAll(Arrays.asList(checked));
         }
-        
+
+        //Actions performed when Timestamp button is pressed.        
         if (tsParam != null) {
             if (null != checked && checked.length > 1) {
             	message = "Only one field can represent the Time Stamp";
@@ -170,6 +195,7 @@ public class ShowOptionsController {
             if (checked != null) params.removeAll(Arrays.asList(checked));
         }
         
+        //Actions performed when Uppercase button is pressed.        
         if (ucParam != null) {
             if (null != checked){
             	for (String att : checked){
@@ -178,6 +204,7 @@ public class ShowOptionsController {
             }
         }
         
+        //Actions performed when Anonymize button is pressed.        
         if (annmParam != null){
             if (null != checked){
             	for (String att : checked){
@@ -187,6 +214,7 @@ public class ShowOptionsController {
             }
         }
         
+        //Actions performed when Lowercase button is pressed.        
         if (lcParam != null) {
         	if (null != checked){
             	for (String att : checked){
@@ -195,6 +223,7 @@ public class ShowOptionsController {
             }
         }
         
+        //Actions performed when Add new field button is pressed.        
         if(addNewField != null){
         	if (newFields.isEmpty()){
         		newFields.put("1", "field value");
@@ -204,15 +233,18 @@ public class ShowOptionsController {
         	}
         }
         
+        //Actions performed when Upload to ES button is pressed.        
         if (uploadParam != null) {
             String ts = timeStamp + "->" + request.getParameter("timeStampFormat");
             String annmAlgo = request.getParameter("annmAlgo");
             TreeMap<String, double[]> rngs = new TreeMap<>();
             Date date = new Date();
             
+            //Creating the configuration file with selected transformations over uploaded files.
             LogConfig confFile= new LogConfig(ES, hourFormat.format(date) + ".conf", ts, renaming, ranging, delete, uppercase, lowercase, anonymize, hashingKey, annmAlgo, newFields, addition);
             String configPath = confFile.getConfig(hourFormat.format(date) + ".conf").getAbsolutePath();
             
+            //If stored files are being processed.
             if (stored.contains("stored")){
             	for (String name : fileNames){
                 	File folder = new File("data/stored/" + name);
@@ -221,6 +253,8 @@ public class ShowOptionsController {
                 	}
                 }
             }
+            
+            //If new uploaded .pcap files are being processed.
             if (stored.contains("new")){
             	for (String name : fileNames){
                 	File folder = new File("data/pendings/" + name);
@@ -229,6 +263,7 @@ public class ShowOptionsController {
                 	}
                 }
             }
+            //If new uploaded log files are being processed.
             if (stored.contains("single")){
             	for (String name : fileNames){
             		File file = new File("data/uploads/" + name);
@@ -236,6 +271,7 @@ public class ShowOptionsController {
             	}
             }
             
+            //Checking whether the asynchronous uploading of logs to Elasticsearch cluster is finished.
             boolean test = false;
             while (!test){
             	test = true;
@@ -246,9 +282,11 @@ public class ShowOptionsController {
             	Thread.sleep(100);
             }
             
+            
             File strd = new File("data/stored");
             if (!strd.exists()) strd.mkdirs();
             
+            //Storing processed .pcap files
             if (store.contains("store") && stored.contains("new")) {
         		for (String name : fileNames){
                 	File srcDir = new File("data/pendings/"+name);
@@ -256,6 +294,8 @@ public class ShowOptionsController {
             	FileUtils.moveDirectory(srcDir, destDir);
         		}
             }
+            
+            //Storing processed .log (.txt, .json) files.
             if (store.contains("store") && stored.contains("single")) {
         		for (String name : fileNames){
                 	File srcDir = new File("data/uploads/"+name);
@@ -263,6 +303,8 @@ public class ShowOptionsController {
             	FileUtils.moveFile(srcDir, destDir);
         		}
             } 
+            
+            //Deleting processed .pcap files if storing was not selected.
             if(store.contains("delete") && stored.contains("new")){
             	for (String nm : fileNames){
                    	File folder = new File("data/pendings/" + nm);
@@ -274,18 +316,23 @@ public class ShowOptionsController {
                    	file.delete();
                 }
             }
+            
+            //Deleting processed .log (.txt, .json) files if storing was not selected.
             if(store.contains("delete") && stored.contains("single")){
             	for (String nm : fileNames){
                    	File file = new File("data/uploads/" + nm);
                    	file.delete();
                 }
             }
+            
+            //Deleting used Logstash configuration file.
             File cfg = new File(hourFormat.format(date) + ".conf");
             cfg.delete();
             
             return new ModelAndView("success", "ES", ES);
         }
         
+        //Creating ModelAndView with selected transformations to visualize the selected changes. 
         params.removeAll(Arrays.asList("@version", "host", "message", "path"));
         Map<String, Object> model = new HashMap<>();
         model.put("store", store);

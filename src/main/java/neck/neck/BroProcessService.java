@@ -14,7 +14,10 @@ import java.util.logging.Level;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.stereotype.Service;
-
+/*
+ * Class BroProcessService processes asynchronously files in .pcap format into .log files.
+ * @author	Martin Lisý
+ */
 @Service
 public class BroProcessService {
     Date date = new Date(); 
@@ -22,16 +25,28 @@ public class BroProcessService {
      public BroProcessService() {
     }     
 
+     /*
+      * @return	Actual date and time.
+      */
     public Date getDate() {
         return date;
     }
+    
+    /*
+     * Asynchronous method for processing .pcap files with Bro.
+     * @param filePath		Absolute path to .pcap file.
+     * @return	Future object of asynchronously processed files.
+     */
     @Async   
     public Future<String> broProcess(String filePath) throws IOException{
         System.out.println("[" + Thread.currentThread().getName() + "] - " + filePath + " is being processed by Bro.");
+        
+        // using file json_iso8601.bro to specify the format of timestampt of incomming .pcap file
         File cfg = new File("json_iso8601.bro"); 
         File pendings = new File("data/pendings");
         if (!pendings.exists()) pendings.mkdirs();
         
+        // creating script with path to input .pcap file that is later executed 
         String dirPath = System.getProperty("user.dir");
         PrintWriter writer = new PrintWriter("script" + filePath +".sh", "UTF-8");     
         writer.println("#!/bin/sh ");
@@ -53,6 +68,7 @@ public class BroProcessService {
             java.util.logging.Logger.getLogger(ShowOptionsController.class.getName()).log(Level.SEVERE, null, ex);
         }
         
+        // deleting processed script
         File file = new File("script" + filePath +".sh");
         file.delete();
         

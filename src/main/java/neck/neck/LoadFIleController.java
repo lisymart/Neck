@@ -36,6 +36,11 @@ import org.springframework.web.servlet.ModelAndView;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+/*
+ * Controller for LoadFile.jsp page.
+ * @author	Martin Lisý
+ */
+
 @Controller
 @SpringBootApplication
 @EnableAsync
@@ -44,15 +49,28 @@ public class LoadFIleController {
     BroProcessService bps;
 	
 	private DateFormat hourFormat = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ssss");
-
+	
+	/* Method for uploading new file. Controller of loadFile.jsp page when the button Next is pressed. 
+	 * @param	request		HttpServletRequest from .jsp page.
+	 * @return	ModelaAndView object within the new .jsp page.
+	 */
     @ResponseBody    
     @RequestMapping(value = "/loadFile", method = RequestMethod.POST, params="continue")
     public ModelAndView loadFile(@RequestParam MultipartFile[] filesToUpload, HttpServletRequest request) throws IOException, URISyntaxException, ServletException, InterruptedException{
     	System.out.println(Thread.currentThread().getName());
+    	
+    	//Names of processed files.
     	ArrayList<String> fileNames = new ArrayList<>();
+    	
+    	//Set of input file types. If more than one, then error message is shown.
     	Set<String> filetypes = new HashSet<>();
+    	
+    	//Parameter indicating whether the input file is supposed to be stored on the server.
     	String store = request.getParameter("store");
+    	
+    	//Parameter with the address of selected Elasticsearch cluster.
     	String ES = request.getParameter("ES");
+    	
     	String filetype = null;
     	boolean stored=false;
     	Date date = new Date();
@@ -63,10 +81,17 @@ public class LoadFIleController {
 			filetypes.add(filetype);
 		}
     	
+    	// More than one file type is not allowed because of different way of processing of each file type.
     	if (filetypes.size() > 1) return new ModelAndView("loadFile", "message", "You selected files with different types. Only one type is allowed.");
+
+    	// If no file is selected.
     	if (filetypes.toArray()[0] == "" && null == request.getParameterValues("checked")) return new ModelAndView("loadFile", "message", "No file selected to upload or no stored file selected to process.");
+    	
+    	//If input file for upload is selected and stored file too.
     	if (filetypes.toArray()[0] != "" && null != request.getParameterValues("checked")) return new ModelAndView("loadFile", "message", "You selected a file to upload and chosed stored file to process. Only one is allowed.");
     	TreeSet<String> checked = new TreeSet<>();
+    	
+    	//Getting the names of files that are already stored on server.
     	if (null != request.getParameterValues("checked")){
     		checked = new TreeSet<>(Arrays.asList(request.getParameterValues("checked")));
     		for (String s: checked){
@@ -79,6 +104,8 @@ public class LoadFIleController {
     		}
     		if (filetypes.size() > 1) return new ModelAndView("loadFile", "message", "You selected files with different types. Only one type is allowed.");
     		stored=true;
+    		
+    	// If nothing is checked, then input file is going to be uploaded.
     	} else {
     		File uploads = new File("data/uploads");
     		if (!uploads.exists()) uploads.mkdirs();
@@ -90,8 +117,12 @@ public class LoadFIleController {
     			stream.close();
     		}
     	}     
+    	
+    	// Different ways of processing of input files are defined.
         System.out.println(filetype);
         switch (filetype) {
+
+        //Pcap file needs to be processed by Bro before transformations are allowed.
             case "pcap" : 
                 if(!stored) {
                 	List<Future<String>> results = new ArrayList<>();
@@ -108,6 +139,7 @@ public class LoadFIleController {
                 		Thread.sleep(100);
                 	}
                 }
+                // Getting the names of attributes of uploaded files.
                 TreeSet<String> attributesPcap;
                 if (stored){
                 	 attributesPcap = showAttributes(fileNames, "stored");
@@ -134,6 +166,7 @@ public class LoadFIleController {
                 	modelPcap.put("stored", "new");
                 }
                 
+                // creating new Model for showing the attributes.
                 modelPcap.put("store", save);
                 modelPcap.put("ES", ES);
                 modelPcap.put("fileNames", fileNames);
@@ -144,6 +177,8 @@ public class LoadFIleController {
             case "log": case "txt": case "json":
             	TreeSet<String> attributes;
             	try {
+            		
+           		// Getting the names of attributes of uploaded files.
             	if (stored) {
             		attributes = showAttributes(fileNames, "stored");
             	} else {
@@ -163,6 +198,7 @@ public class LoadFIleController {
                 } else {
                 	model.put("stored", "single");
                 }
+                // creating new Model for showing the attributes.
                 model.put("store", save);
                 model.put("ES", ES);
                 model.put("fileNames", fileNames);
@@ -172,10 +208,15 @@ public class LoadFIleController {
         }
         Map <String, Object> model = new HashMap<>();
         model.put("ES", ES);
+        // If the file type does not match any from switch case, then error is shown.
         model.put("message", "Unsupported file type.");
         return new ModelAndView("loadFile", model);
     }   
     
+    /* Method for choosing stored file to process. Controller for index.jsp page when the button Choose stored file is pressed. 
+     * @param	request		HttpServletRequest from .jsp page.
+     * @return	ModelAndView object within the new jsp page.
+     */
     @RequestMapping(value = "/loadFile", method = RequestMethod.POST, params="chooseFile")
     public ModelAndView chooseFile(HttpServletRequest request) {
     	String ES = request.getParameter("ES");
@@ -195,6 +236,10 @@ public class LoadFIleController {
     	return new ModelAndView("loadFile", model);
     }
     
+    /* Method for deleting files that are stored on server. Controller for loadFile.jsp page when the button Delete selected is pressed.
+     * @param	request		HttpServletRequest from .jsp page.
+     * @return	ModelAndView object within the new jsp page.
+     */
     @RequestMapping(value = "/loadFile", method = RequestMethod.POST, params="delete")
     public ModelAndView delete(HttpServletRequest request) {
     	TreeSet<String> names = new TreeSet<>();
@@ -224,6 +269,11 @@ public class LoadFIleController {
     	return new ModelAndView("loadFile", model);
     }
 
+    /* Method for getting the names of attribudes depending on fact, whether is the file new or stored.
+     * @param	fileNames		Collection of processed file names.
+     * @param	location		Location of processed files (stored or uploads).
+     * return	Collection of attributes of processed log files.
+     */
     public TreeSet<String> showAttributes(ArrayList<String> fileNames, String location) throws ServletException, IOException {
         TreeSet<String> attributes = new TreeSet<String>();
         for (String fileName : fileNames){
@@ -239,6 +289,10 @@ public class LoadFIleController {
         return attributes;        
     }	
     
+    /* Method for getting the names of attributes from uploaded files.
+     * @param	attributes		Collection attributes of processed log files.
+     * @param	f				Specified log file from which the attributes are being obtained.
+     */
     public void getAtts(TreeSet<String> attributes, File f) throws IOException{
     	BufferedReader br = Files.newBufferedReader(f.toPath(), Charset.forName("ISO-8859-1")); 
     	
@@ -258,6 +312,10 @@ public class LoadFIleController {
 
     }
     
+    /* Method for converting the filenames stored on server in order to make it more practical for use.
+     * @param	s			File name that is being tranfsormed to another format in order to better understand the naming convention.
+     * @return	New transformed file name.
+     */
     public String convertFileName(String s){
     	String temp1[] = s.split("\\(");
 		String fname = temp1[0].split(" ")[0];

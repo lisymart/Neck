@@ -12,10 +12,19 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.ServletException;
 
-
+/*
+ * Class PathsController controls the necessary installations of required systems. (Bro and Logstash).
+ * @author Martin Lisý
+ */
 public class PathsController {
+	/*
+	 * Method checkInstallations creates scripts with installation of systems check that are executed.
+	 * @return	Collection of names of systems that are properly set.
+	 */
     public ArrayList<String> checkInstallations() throws ServletException, IOException {        
     	ArrayList<String> running = new ArrayList<String>();
+    	
+    	//Checking whether Bro system is properly installed and set.
         PrintWriter writerSh = new PrintWriter("scriptTest.sh", "UTF-8");     
         writerSh.println("#!/bin/sh ");
         writerSh.println("broctl status");
@@ -34,6 +43,7 @@ public class PathsController {
         List<String> broLines = new ArrayList<>();
         for (String line : Files.readAllLines(Paths.get("broOutput.txt"), Charset.forName("ISO-8859-1"))) {broLines.add(line);}
         
+        //Checking whether Logstash system is properly installed and set.
         writerSh = new PrintWriter("scriptTest.sh", "UTF-8");     
         writerSh.println("#!/bin/sh ");
         writerSh.println("logstash --version");
@@ -69,6 +79,7 @@ public class PathsController {
         	}
         }
         
+        //Creating configuration file for Bro that converts the format of timestamp from Unix to ISO8601.
         PrintWriter writer = new PrintWriter("json_iso8601.bro");
         writer.println("@load policy/tuning/json-logs");
         writer.println("redef LogAscii::json_timestamps = JSON::TS_ISO8601;");
