@@ -73,6 +73,16 @@ li {
     height: 100%;
 }
 
+.importCfg {
+	width: 0.1px; 
+	height: 0.1px; 
+	opacity: 0; 
+	overflow: hidden; 
+	position: absolute; 
+	z-index: -1;
+}
+
+
 .btn {
 	background:-webkit-gradient(linear, left top, left bottom, color-stop(0.05, #44c767), color-stop(1, #5cbf2a));
 	background:-moz-linear-gradient(top, #44c767 5%, #5cbf2a 100%);

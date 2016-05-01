@@ -51,7 +51,8 @@ public class LogConfig {
         // TimeStamp definition
         if (!timeStamp.contains("null")) {
         	String[] ts = timeStamp.split("->");
-        	writerSh.println("date { match => [\"" + ts[0] + "\", \"" + ts[1] + "\"] remove_field => [\"" + ts[0] + "\"] }");
+        	writerSh.print("date { match => [\"" + ts[0] + "\", \"" + ts[1] + "\"] ");
+        	writerSh.println("remove_field => [\"" + ts[0] + "\"] }");
         }
         
         //Renaming transformation definition
@@ -123,7 +124,7 @@ public class LogConfig {
         if(!anonymize.isEmpty()){
         	writerSh.println("anonymize { ");
         	writerSh.println("algorithm => \"" + annmAlgo + "\"");
-        	writerSh.println("fields => [");
+        	writerSh.print("fields => [");
         	boolean isFirst = true;
         	for (String s: anonymize){
         		if (isFirst) {
@@ -141,34 +142,34 @@ public class LogConfig {
         //Range transformation definition
         if(!ranging.isEmpty()){
         	writerSh.print("range { ");
-        	writerSh.print("ranges => [");
+        	writerSh.println("ranges => [");
         	boolean isFirst = true;
         	
         	for (String s: ranging.keySet()){
         		String lowerBound =  ranging.get(s).get(0);
         		String upperBound = ranging.get(s).get(1);
         		
-        		if (lowerBound != "" && upperBound != ""){
+        		if (!lowerBound.isEmpty() && !upperBound.isEmpty()){
         			if (isFirst) {
-            			writerSh.println("\"" + s + "\", " +Long.MIN_VALUE + ", " + (Double.parseDouble(lowerBound) - offset) + ", " + "\"drop\"");
-            			writerSh.println(",\"" + s + "\", " + (Double.parseDouble(upperBound) + offset) + ", " + Long.MAX_VALUE + ", " + "\"drop\"");
+            			writerSh.println("\"" + s + "\"," +Long.MIN_VALUE + "," + (Double.parseDouble(lowerBound) - offset) + "," + "\"drop\"");
+            			writerSh.println(",\"" + s + "\"," + (Double.parseDouble(upperBound) + offset) + "," + Long.MAX_VALUE + "," + "\"drop\"");
             			isFirst = false;
             		} else {
-            			writerSh.println(",\"" + s + "\", " + Long.MIN_VALUE + ", " + (Double.parseDouble(lowerBound) - offset) + ", " + "\"drop\"");
-            			writerSh.println(",\"" + s + "\", " + (Double.parseDouble(upperBound) + offset) + ", " + Long.MAX_VALUE + ", " + "\"drop\"");
+            			writerSh.println(",\"" + s + "\"," + Long.MIN_VALUE + "," + (Double.parseDouble(lowerBound) - offset) + "," + "\"drop\"");
+            			writerSh.println(",\"" + s + "\"," + (Double.parseDouble(upperBound) + offset) + "," + Long.MAX_VALUE + "," + "\"drop\"");
             		}
-        		} else if(lowerBound == "") {
+        		} else if(lowerBound.isEmpty()) {
         			if(isFirst){
-        				writerSh.println("\"" + s + "\", " + (Double.parseDouble(upperBound) + offset) + ", " + Long.MAX_VALUE + ", " + "\"drop\"");
+        				writerSh.println("\"" + s + "\"," + (Double.parseDouble(upperBound) + offset) + "," + Long.MAX_VALUE + "," + "\"drop\"");
         				isFirst = false;
         			} else  {
-        				writerSh.println(",\"" + s + "\", " + (Double.parseDouble(upperBound) + offset) + ", " + Long.MAX_VALUE + ", " + "\"drop\"");
+        				writerSh.println(",\"" + s + "\"," + (Double.parseDouble(upperBound) + offset) + "," + Long.MAX_VALUE + "," + "\"drop\"");
         			}
-        		} else if (upperBound == "") {
+        		} else if (upperBound.isEmpty()) {
         			if (isFirst) {
-        				writerSh.println("\"" + s + "\", " +Long.MIN_VALUE + ", " + (Double.parseDouble(lowerBound) - offset) + ", " + "\"drop\"");
+        				writerSh.println("\"" + s + "\"," +Long.MIN_VALUE + "," + (Double.parseDouble(lowerBound) - offset) + "," + "\"drop\"");
         			} else {
-        				writerSh.println(",\"" + s + "\", " +Long.MIN_VALUE + ", " + (Double.parseDouble(lowerBound) - offset) + ", " + "\"drop\"");
+        				writerSh.println(",\"" + s + "\"," +Long.MIN_VALUE + "," + (Double.parseDouble(lowerBound) - offset) + "," + "\"drop\"");
         			}
         		}
         	}
@@ -181,7 +182,7 @@ public class LogConfig {
         	for (String s : newFields.keySet()){
         		writerSh.println("\"" + s + "\" => \"" + newFields.get(s) + "\"");
         	}
-        	writerSh.println("} }");
+        	writerSh.println("}}");
         }
         
         // Field for additional configuration code

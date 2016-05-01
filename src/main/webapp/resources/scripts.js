@@ -72,4 +72,3 @@ function ShowLoading(e) {
     	document.getElementById('overlay').style.display = '';
     	e.stopPropagation();
 }
-

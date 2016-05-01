@@ -16,6 +16,12 @@
    <mvc:annotation-driven/>
    <mvc:default-servlet-handler/>
    
+   <mvc:annotation-driven>
+    	<mvc:message-converters>
+        	<bean class="org.springframework.http.converter.ByteArrayHttpMessageConverter" />
+    	</mvc:message-converters>
+	</mvc:annotation-driven>
+   
    <mvc:annotation-driven> 
     <mvc:async-support default-timeout="30000" task-executor="taskExecutor"/>
   </mvc:annotation-driven>

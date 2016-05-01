@@ -10,13 +10,12 @@
 </head> 
 <body>
 	<div id="center">
-		<form name="frm" action="/Neck/showOptions" method="POST" onsubmit="ShowLoading()">
+		<form name="frm" action="/Neck/showOptions" method="POST" enctype="multipart/form-data" >
 		<input type="hidden" name="store" value="${store}">
 		<input type="hidden" name="stored" value="${stored}">
 		<input type="hidden" name="ES" value="${ES}">
 		<h1> Neck </h1>
 		<div> Here are selected attributes from the first 1000 lines of each log. You can modify them. </div>
-		<div class="errorMessage">${message}</div> 
 		<div class="gray">
 		<a> File(s): </a> 
 		<c:forEach var="name" items="${fileNames}">
@@ -24,21 +23,24 @@
 			<input type="hidden" name="fileNames" value="${name}">
 		</c:forEach>
 		</div>
+		<input type="file" name="importConfig" onchange="this.form.submit()" class="importCfg" id="importCfg">
+		<label class="btn" for="importCfg" onClick="ShowLoading()">Import config file</label>
+		<div class="errorMessage">${message}</div> 
 		<br>
 		<div class="gray">
 		<div> Choose attributes and action: </div>
 		<br>
 		<div>
-		<input class="btn" name="restore" type="submit" value="Restore">
-		<input class="btn" name="addn" type="submit" value="Add new field">
+		<input class="btn" name="restore" type="submit" value="Restore" onClick="ShowLoading()">
+		<input class="btn" name="addn" type="submit" value="Add new field" onClick="ShowLoading()">
 		<br>
-		<input class="btn" name="annm" type="submit" value="Anonymize">
-		<input class="btn" name="dlt" type="submit" value="Delete">
-		<input class="btn" name="rnm" type="submit" value="Rename">
-		<input class="btn" name="rng" type="submit" value="Range">
-		<input class="btn" name="ts" type="submit" value="TimeStamp">
-		<input class="btn" name="lc" type="submit" value="LowerCase">
-		<input class="btn" name="uc" type="submit" value="UpperCase">
+		<input class="btn" name="annm" type="submit" value="Anonymize" onClick="ShowLoading()">
+		<input class="btn" name="dlt" type="submit" value="Delete" onClick="ShowLoading()">
+		<input class="btn" name="rnm" type="submit" value="Rename" onClick="ShowLoading()">
+		<input class="btn" name="rng" type="submit" value="Range" onClick="ShowLoading()">
+		<input class="btn" name="ts" type="submit" value="TimeStamp" onClick="ShowLoading()">
+		<input class="btn" name="lc" type="submit" value="LowerCase" onClick="ShowLoading()">
+		<input class="btn" name="uc" type="submit" value="UpperCase" onClick="ShowLoading()">
 		<br>
 		<label><input type="checkbox" name="allCheck" onClick="selectallMe()">  select all </label>
 		<ul class="params">
@@ -57,13 +59,13 @@
 		</ul>
 		<a> Last 4 values are automatically added by ES. You can modify them too. </a>
 		<br>
-		<input class="btn" name="annm" type="submit" value="Anonymize">
-		<input class="btn" name="dlt" type="submit" value="Delete">
-		<input class="btn" name="rnm" type="submit" value="Rename">
-		<input class="btn" name="rng" type="submit" value="Range">
-		<input class="btn" name="ts" type="submit" value="TimeStamp">
-		<input class="btn" name="lc" type="submit" value="LowerCase">
-		<input class="btn" name="uc" type="submit" value="UpperCase">
+		<input class="btn" name="annm" type="submit" value="Anonymize" onClick="ShowLoading()">
+		<input class="btn" name="dlt" type="submit" value="Delete" onClick="ShowLoading()" >
+		<input class="btn" name="rnm" type="submit" value="Rename" onClick="ShowLoading()">
+		<input class="btn" name="rng" type="submit" value="Range" onClick="ShowLoading()">
+		<input class="btn" name="ts" type="submit" value="TimeStamp" onClick="ShowLoading()">
+		<input class="btn" name="lc" type="submit" value="LowerCase" onClick="ShowLoading()">
+		<input class="btn" name="uc" type="submit" value="UpperCase" onClick="ShowLoading()">
 		</div>
 		<br>
 		</div>
@@ -108,7 +110,7 @@
 				<c:if test="${empty item.value}">
 					<td> <input type="text" name="rng${item.key}"> </td>
 					<td> <input type="text" name="rng${item.key}"> </td>
-				</c:if>				
+				</c:if>			 	
 				</tr>
 			</c:forEach>
 		</table>
@@ -200,10 +202,10 @@
 		<div id="spinner" style="display: none"><img src="/Neck/resources/spinner.gif"/><br> Processing, please wait.</div>
 		<div id="overlay" style="display: none"> </div>
 		<br>
-		<input id="button-upload" class="btn" name="uploadToES" type="submit" value="Upload to ES">
+		<input type="submit" class="btn" name="exportCfg" value="Download created config file">
+		<input id="button-upload" class="btn" name="uploadToES" type="submit" value="Upload to ES" onClick="ShowLoading()">
 		<br>
 		<br>
-		
 		</form>
 	</div>
 </body>
