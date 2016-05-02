@@ -1,7 +1,9 @@
 package neck.neck;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.util.concurrent.Future;
 import java.util.logging.Level;
@@ -37,6 +39,8 @@ public class LogstashProcessService{
         	Process p = pb.start();           
         	
         	try {   
+        		BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
+        		while (reader.readLine() != null) {}
         		p.waitFor();
         	} catch (InterruptedException ex) {
         		java.util.logging.Logger.getLogger(ShowOptionsController.class.getName()).log(Level.SEVERE, null, ex);
@@ -46,6 +50,6 @@ public class LogstashProcessService{
         	file.delete();
         }   
         System.out.println("[" + Thread.currentThread().getName() + "] - " + fileName.getAbsolutePath() + " ~ done.");
-        return new AsyncResult<String>("progress");
+        return new AsyncResult<String>("done");
     }
 }

@@ -5,8 +5,10 @@
  */
 package neck.neck;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.util.Date;
 import java.util.concurrent.Future;
@@ -62,7 +64,9 @@ public class BroProcessService {
         ProcessBuilder pb = new ProcessBuilder("/bin/bash", "script" + filePath +".sh");
         Process p = pb.start();           
             
-        try {   
+        try {  
+        	BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
+    		while ((reader.readLine()) != null) {}
             p.waitFor();
         } catch (InterruptedException ex) {
             java.util.logging.Logger.getLogger(ShowOptionsController.class.getName()).log(Level.SEVERE, null, ex);
