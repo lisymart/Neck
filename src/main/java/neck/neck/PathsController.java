@@ -1,16 +1,15 @@
 package neck.neck;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.concurrent.TimeoutException;
 import javax.servlet.ServletException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.zeroturnaround.exec.InvalidExitValueException;
+import org.zeroturnaround.exec.ProcessExecutor;
 
 /*
  * Class PathsController controls the necessary installations of required systems. (Bro and Logstash).
@@ -21,62 +20,32 @@ public class PathsController {
 	 * Method checkInstallations creates scripts with installation of systems check that are executed.
 	 * @return	Collection of names of systems that are properly set.
 	 */
-    public ArrayList<String> checkInstallations() throws ServletException, IOException {        
-    	ArrayList<String> running = new ArrayList<String>();
+    public List<String> checkInstallations() throws ServletException, IOException, InvalidExitValueException, InterruptedException, TimeoutException {  
+    	Logger logger = LoggerFactory.getLogger(PathsController.class);
+    	logger.info("Checking the necessary installations.");
+    	List<String> running = new ArrayList<String>();
     	
     	//Checking whether Bro system is properly installed and set.
-        PrintWriter writerSh = new PrintWriter("scriptTest.sh", "UTF-8");     
-        writerSh.println("#!/bin/sh ");
-        writerSh.println("broctl status");
-        writerSh.close();
-        File broOutput = new File("broOutput.txt");
-        ProcessBuilder pb = new ProcessBuilder("/bin/bash", "scriptTest.sh");
-        pb.redirectOutput(broOutput);
-        Process p = pb.start();
-        try {
-            p.waitFor();
-        } catch (InterruptedException ex) {
-            Logger.getLogger(PathsController.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        File file = new File("scriptTest.sh");
-        file.delete();
-        List<String> broLines = new ArrayList<>();
-        for (String line : Files.readAllLines(Paths.get("broOutput.txt"), Charset.forName("ISO-8859-1"))) {broLines.add(line);}
+    	String broOutput = new ProcessExecutor().command("broctl", "status")
+                .readOutput(true).execute()
+                .outputUTF8();    
         
         //Checking whether Logstash system is properly installed and set.
-        writerSh = new PrintWriter("scriptTest.sh", "UTF-8");     
-        writerSh.println("#!/bin/sh ");
-        writerSh.println("logstash --version");
-        writerSh.println("plugin install logstash-filter-range");
-        writerSh.close();
-        File logstashOutput = new File("logstashOutput.txt");
-        pb = new ProcessBuilder("/bin/bash", "scriptTest.sh");
-        pb.redirectOutput(logstashOutput);
-        p = pb.start();
-        try {
-            p.waitFor();
-        } catch (InterruptedException ex) {
-            Logger.getLogger(PathsController.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        file = new File("scriptTest.sh");
-        file.delete();
-        List<String> logstashLines = new ArrayList<>();
-        for (String line : Files.readAllLines(Paths.get("logstashOutput.txt"), Charset.forName("ISO-8859-1"))) {logstashLines.add(line);}
-       
-        if (broLines.size() != 0){
-        	List<String> broProof = new ArrayList<>();
-        	for (String line : broLines.get(0).split(" ")) {broProof.add(line);}
-        	if (!broProof.get(1).contains("command")){
-        		running.add("bro");
-        	}
+    	String logstashOutput = new ProcessExecutor().command("logstash", "--version")
+                .readOutput(true).execute()
+                .outputUTF8();    
+    	
+    	//Installing missing plugin
+    	new ProcessExecutor().command("plugin", "install", "logstash-filter-range")
+                .readOutput(true).execute();
+        
+               
+       	if (!broOutput.contains("command")){
+        	running.add("bro");
         }
 
-        if (logstashLines.size() != 0){
-        	List<String> logstashProof = new ArrayList<>();
-        	for (String line : logstashLines.get(0).split(" ")) {logstashProof.add(line);}
-        	if (!logstashProof.get(1).contains("command")){
-        		running.add("logstash");
-        	}
+       	if (!logstashOutput.contains("command")){
+        	running.add("logstash");
         }
         
         //Creating configuration file for Bro that converts the format of timestamp from Unix to ISO8601.
@@ -85,11 +54,6 @@ public class PathsController {
         writer.println("redef LogAscii::json_timestamps = JSON::TS_ISO8601;");
         writer.close();
                         
-        file = new File("broOutput.txt");
-        file.delete();
-        file = new File("logstashOutput.txt");
-        file.delete();
-        
         return running; 
     }
 }

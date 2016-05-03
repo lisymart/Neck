@@ -85,6 +85,21 @@
 			<artifactId>guava</artifactId>
 			<version>r05</version>
 		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>1.7.21</version>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-simple</artifactId>
+			<version>1.7.21</version>
+		</dependency>
+		<dependency>
+    		<groupId>org.zeroturnaround</groupId>
+    		<artifactId>zt-exec</artifactId>
+    		<version>1.9</version>
+		</dependency>
     </dependencies>
 
     <build>

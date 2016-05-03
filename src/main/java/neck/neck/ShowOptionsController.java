@@ -17,10 +17,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.TreeSet;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeoutException;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.io.FileUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.scheduling.annotation.EnableAsync;
@@ -79,7 +84,7 @@ public class ShowOptionsController {
     														@RequestParam MultipartFile importConfig,
     														//@RequestParam MultipartFile exportConfig,
     														@RequestParam final String addition) 
-    														throws IOException, InterruptedException{
+    														throws IOException, InterruptedException, ExecutionException, TimeoutException{
     	//Collections with attributes of specified transformations.
     	TreeSet<String> fileNames = new TreeSet<>(Arrays.asList(request.getParameterValues("fileNames")));
     	TreeSet<String> params = new TreeSet<>();
@@ -102,6 +107,9 @@ public class ShowOptionsController {
         String hashingKey = null;
         String tsFormat = null;
         String errorMessage = null;
+        
+        Logger logger = LoggerFactory.getLogger(ShowOptionsController.class);
+        
         
         //Checking which attributes have been specified in previous step.
         if (null != request.getParameterValues("rename")) {
@@ -149,6 +157,7 @@ public class ShowOptionsController {
         
         //Importing saved configuration file.
         if (!importConfig.isEmpty()){
+        	logger.info("Importing existing configuration file.");
         	if(importConfig.getOriginalFilename().endsWith(".conf")){
         		File file = new File(importConfig.getOriginalFilename());
         		BufferedOutputStream stream = new BufferedOutputStream(new FileOutputStream(new File(importConfig.getOriginalFilename())));
@@ -163,6 +172,7 @@ public class ShowOptionsController {
         					timeStamp =  tmp[1];
         					tsFormat = tmp[3];
         					line = br.readLine();
+        					params.remove(timeStamp);
         				}
         				
         				if (line.contains("rename =>")) {
@@ -178,6 +188,7 @@ public class ShowOptionsController {
         					for (int i = 1; i < tmp.length; i+=2){
         						delete.add(tmp[i]);
         					}
+        					params.removeAll(delete);
         				}
         				if (line.contains("uppercase =>")){
         					String[] tmp = line.split("\"");
@@ -255,9 +266,11 @@ public class ShowOptionsController {
         			file.delete();
         		} catch (IOException e) {
 				e.printStackTrace();
+				logger.error(e.getLocalizedMessage());
         		}
         	} else {
         		errorMessage = "Unknown format of uploaded config file. Only .conf is allowed.";
+        		logger.error("Unknown format of uploaded config file. Only .conf is allowed.");
         	}
 			
         }
@@ -365,6 +378,7 @@ public class ShowOptionsController {
         
         //Actions performed when Download created config file button.
         if (exportCfg != null){
+        	logger.info("Downloading created configuration file.");
     		response.setContentType("text/plain");
     		String outputCfgName = fileNames.first() + ".conf";
     		response.setHeader("Content-disposition", "attachment;filename="+outputCfgName);
@@ -389,6 +403,7 @@ public class ShowOptionsController {
         
         //Actions performed when Upload to ES button is pressed.        
         if (uploadParam != null) {
+        	logger.info("Uploading data to Elasticsearch.");
             String ts = timeStamp + "->" + request.getParameter("timeStampFormat");
             String annmAlgo = request.getParameter("annmAlgo");
             Date date = new Date();
@@ -481,7 +496,7 @@ public class ShowOptionsController {
             //Deleting used Logstash configuration file.
             File cfg = new File(hourFormat.format(date) + ".conf");
             cfg.delete();
-            
+            logger.info("Uploading was successful");
             return new ModelAndView("success", "ES", ES);
         }
         

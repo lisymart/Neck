@@ -17,8 +17,9 @@
 <input type="hidden" name="ES" value="${ES}">
 <img src="${pageContext.request.contextPath}/resources/spinner.gif" style="display: none;" id="loading_image">
 <br>
-<a><label>(store on server <input type="checkbox" name="store" value="store">)</label></a>
 <input type="file" name="filesToUpload" multiple="multiple">
+<br>
+<a><label>(store on server <input type="checkbox" name="store" value="store">)</label></a>
 <br>
 <br>
 <a>(or)</a>

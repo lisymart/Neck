@@ -19,9 +19,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeoutException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.scheduling.annotation.EnableAsync;
@@ -32,7 +36,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
-
+import org.zeroturnaround.exec.InvalidExitValueException;
+import org.zeroturnaround.exec.ProcessExecutor;
+import org.zeroturnaround.exec.ProcessResult;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -47,6 +53,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class LoadFIleController {
 	@Autowired
     BroProcessService bps;
+	private Logger logger = LoggerFactory.getLogger(LoadFIleController.class);
 	
 	private DateFormat hourFormat = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ssss");
 	
@@ -56,8 +63,7 @@ public class LoadFIleController {
 	 */
     @ResponseBody    
     @RequestMapping(value = "/loadFile", method = RequestMethod.POST, params="continue")
-    public ModelAndView loadFile(@RequestParam MultipartFile[] filesToUpload, HttpServletRequest request) throws IOException, URISyntaxException, ServletException, InterruptedException{
-    	System.out.println(Thread.currentThread().getName());
+    public ModelAndView loadFile(@RequestParam MultipartFile[] filesToUpload, HttpServletRequest request) throws IOException, URISyntaxException, ServletException, InterruptedException, InvalidExitValueException, TimeoutException, ExecutionException{
     	
     	//Names of processed files.
     	ArrayList<String> fileNames = new ArrayList<>();
@@ -119,20 +125,20 @@ public class LoadFIleController {
     	}     
     	
     	// Different ways of processing of input files are defined.
-        System.out.println(filetype);
-        switch (filetype) {
+    	logger.info("Files to process: " + fileNames.toString());
+    	switch (filetype) {
 
         //Pcap file needs to be processed by Bro before transformations are allowed.
             case "pcap" : 
                 if(!stored) {
-                	List<Future<String>> results = new ArrayList<>();
+                	List<Future<ProcessResult>> results = new ArrayList<>();
                 	for (String filePath : fileNames){
                 		results.add(bps.broProcess(filePath));
                 	}
                 	boolean test = false;
                 	while (!test){
                 		test = true;
-                		for (Future<String> wait : results){
+                		for (Future<ProcessResult> wait : results){
                 			if (wait.isDone()) test &= true;
                 			else test &= false;
                 		}
@@ -171,9 +177,8 @@ public class LoadFIleController {
                 modelPcap.put("ES", ES);
                 modelPcap.put("fileNames", fileNames);
                 modelPcap.put("attributesList", attributesPcap);
-                
+                logger.info("Attributes are prepared to show.");
                 return new ModelAndView("showOptions", modelPcap);
-            //case "csv": 
             case "log": case "txt": case "json":
             	TreeSet<String> attributes;
             	try {
@@ -203,7 +208,7 @@ public class LoadFIleController {
                 model.put("ES", ES);
                 model.put("fileNames", fileNames);
                 model.put("attributesList", attributes);
-                
+                logger.info("Attributes are prepared to show.");
                 return new ModelAndView("showOptions", model);
         }
         Map <String, Object> model = new HashMap<>();
@@ -219,12 +224,14 @@ public class LoadFIleController {
      */
     @RequestMapping(value = "/loadFile", method = RequestMethod.POST, params="chooseFile")
     public ModelAndView chooseFile(HttpServletRequest request) {
+    	logger.info("Selecting alredy stored file.");
     	String ES = request.getParameter("ES");
     	File folder = new File("data/stored");
     	ArrayList<String> names = new ArrayList<>();
     	Map <String, Object> model = new HashMap<>();
     	if (null == folder.listFiles()){
     		model.put("message", "No files has been stored on server yet.");
+    		logger.warn("No files has been stored on server yet.");
     	} else {
     		for (File f: folder.listFiles()){
     			String[] temp = f.getName().split("-");
@@ -256,7 +263,9 @@ public class LoadFIleController {
     		for (String s: names){
     			File folder = new File("data/stored/" + s);
     			for (File f: folder.listFiles()){
+    				logger.info(f.getName() + "is now removed from server.");
     				f.delete();
+    				
     			}
     			folder.delete();
     		}
@@ -274,13 +283,15 @@ public class LoadFIleController {
      * @param	location		Location of processed files (stored or uploads).
      * return	Collection of attributes of processed log files.
      */
-    public TreeSet<String> showAttributes(ArrayList<String> fileNames, String location) throws ServletException, IOException {
+    public TreeSet<String> showAttributes(ArrayList<String> fileNames, String location) throws ServletException, IOException, InvalidExitValueException, InterruptedException, TimeoutException {
+    	logger.info("Getting attributes from imported files.");
         TreeSet<String> attributes = new TreeSet<String>();
         for (String fileName : fileNames){
         	File folder = new File("data/" + location + "/" + fileName); 
         	if (folder.isDirectory()){
+        		new ProcessExecutor().directory(folder).command("rm", "-r", ".state").execute();
         		for (File f : folder.listFiles()) {
-        		getAtts(attributes, f);
+        			getAtts(attributes, f);
         		}
         	} else {
         		getAtts(attributes, folder);

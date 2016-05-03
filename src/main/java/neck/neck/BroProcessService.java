@@ -5,17 +5,20 @@
  */
 package neck.neck;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
 import java.util.Date;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
-import java.util.logging.Level;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Async;
-import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.stereotype.Service;
+import org.zeroturnaround.exec.InvalidExitValueException;
+import org.zeroturnaround.exec.ProcessExecutor;
+import org.zeroturnaround.exec.ProcessResult;
 /*
  * Class BroProcessService processes asynchronously files in .pcap format into .log files.
  * @author	Martin Lisý
@@ -26,13 +29,6 @@ public class BroProcessService {
     
      public BroProcessService() {
     }     
-
-     /*
-      * @return	Actual date and time.
-      */
-    public Date getDate() {
-        return date;
-    }
     
     /*
      * Asynchronous method for processing .pcap files with Bro.
@@ -40,8 +36,9 @@ public class BroProcessService {
      * @return	Future object of asynchronously processed files.
      */
     @Async   
-    public Future<String> broProcess(String filePath) throws IOException{
-        System.out.println("[" + Thread.currentThread().getName() + "] - " + filePath + " is being processed by Bro.");
+    public Future<ProcessResult> broProcess(String filePath) throws IOException, InvalidExitValueException, InterruptedException, TimeoutException, ExecutionException{
+    	Logger logger = LoggerFactory.getLogger(BroProcessService.class);
+    	logger.info(filePath + " is being processed by Bro.");;
         
         // using file json_iso8601.bro to specify the format of timestampt of incomming .pcap file
         File cfg = new File("json_iso8601.bro"); 
@@ -50,33 +47,18 @@ public class BroProcessService {
         
         // creating script with path to input .pcap file that is later executed 
         String dirPath = System.getProperty("user.dir");
-        PrintWriter writer = new PrintWriter("script" + filePath +".sh", "UTF-8");     
-        writer.println("#!/bin/sh ");
-        writer.println("cd data/pendings");
-        writer.println("mkdir " + filePath);
-        writer.println("cd " + filePath);
-        writer.println("bro -r " + dirPath + "/data/uploads/" + filePath + " " + cfg.getAbsolutePath());
-        writer.println("rm -r .state");
-        writer.println("cd ..");
-        writer.println("cd ..");
-        writer.println("cd ..");
-        writer.close();
-        ProcessBuilder pb = new ProcessBuilder("/bin/bash", "script" + filePath +".sh");
-        Process p = pb.start();           
-            
-        try {  
-        	BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
-    		while ((reader.readLine()) != null) {}
-            p.waitFor();
-        } catch (InterruptedException ex) {
-            java.util.logging.Logger.getLogger(ShowOptionsController.class.getName()).log(Level.SEVERE, null, ex);
-        }
         
-        // deleting processed script
-        File file = new File("script" + filePath +".sh");
-        file.delete();
+        new ProcessExecutor().command("mkdir", dirPath + "/data/pendings/" + filePath).execute();
+        File file = new File(dirPath + "/data/pendings/" + filePath);
+        Future<ProcessResult> output = new ProcessExecutor().directory(file).command("bro", "-r", dirPath + "/data/uploads/" + filePath, cfg.getAbsolutePath())
+                .readOutput(true).start()
+                .getFuture(); 
         
-        System.out.println("[" + Thread.currentThread().getName() + "] - " + filePath + " ~ done.");
-        return new AsyncResult<String>(filePath);
+        String line = output.get(60, TimeUnit.SECONDS).outputUTF8();
+        logger.info(line);
+        
+
+        logger.info(filePath + " ~ done.");
+        return output;
     }
 }

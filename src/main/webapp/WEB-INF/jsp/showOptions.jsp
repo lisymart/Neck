@@ -24,7 +24,7 @@
 		</c:forEach>
 		</div>
 		<input type="file" name="importConfig" onchange="this.form.submit()" class="importCfg" id="importCfg">
-		<label class="btn" for="importCfg" onClick="ShowLoading()">Import config file</label>
+		<label class="btn" for="importCfg">Import config file</label>
 		<div class="errorMessage">${message}</div> 
 		<br>
 		<div class="gray">

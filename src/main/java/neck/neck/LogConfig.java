@@ -8,6 +8,9 @@ import java.util.ArrayList;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /*
  * Class creating Logstash configuration file, where all transformations are set.
  * @author	Martin Lisý
@@ -40,6 +43,8 @@ public class LogConfig {
      */
     public void logConfig(String host, String confName, String timeStamp, TreeMap<String, String> renaming, TreeMap<String, ArrayList<String>> ranging, TreeSet<String> delete, TreeSet<String> uppercase, 
     		TreeSet<String> lowercase, TreeSet<String> anonymize, String hashingKey, String annmAlgo, TreeMap<String, String> newFields, String addition) throws FileNotFoundException, UnsupportedEncodingException{
+    	Logger logger = LoggerFactory.getLogger(LogConfig.class);
+    	logger.info("Creating configuration file.");
     	PrintWriter writerSh = new PrintWriter(confName, "UTF-8");
     	// Input definition (standard input)
         writerSh.println("input { stdin {} }");
@@ -195,6 +200,7 @@ public class LogConfig {
         
         //Output filter definition with selected Elasticsearch cluster setting.
         writerSh.println("output { elasticsearch { hosts => [\"" + host + "\"] }");
+        writerSh.println("stdout { codec => rubydebug }");
         writerSh.println("}");
         writerSh.close();
     }
