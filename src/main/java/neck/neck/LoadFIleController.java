@@ -24,6 +24,8 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeoutException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -289,7 +291,7 @@ public class LoadFIleController {
         for (String fileName : fileNames){
         	File folder = new File("data/" + location + "/" + fileName); 
         	if (folder.isDirectory()){
-        		new ProcessExecutor().directory(folder).command("rm", "-r", ".state").execute();
+        		FileUtils.deleteDirectory(new File(folder.getAbsolutePath() + "/.state"));
         		for (File f : folder.listFiles()) {
         			getAtts(attributes, f);
         		}

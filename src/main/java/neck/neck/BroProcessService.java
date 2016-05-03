@@ -7,6 +7,9 @@ package neck.neck;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Date;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
@@ -47,8 +50,8 @@ public class BroProcessService {
         
         // creating script with path to input .pcap file that is later executed 
         String dirPath = System.getProperty("user.dir");
-        
-        new ProcessExecutor().command("mkdir", dirPath + "/data/pendings/" + filePath).execute();
+        Path path = Paths.get((dirPath + "/data/pendings/" + filePath));
+        Files.createDirectories(path);
         File file = new File(dirPath + "/data/pendings/" + filePath);
         Future<ProcessResult> output = new ProcessExecutor().directory(file).command("bro", "-r", dirPath + "/data/uploads/" + filePath, cfg.getAbsolutePath())
                 .readOutput(true).start()
