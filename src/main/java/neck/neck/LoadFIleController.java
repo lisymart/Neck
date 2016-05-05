@@ -24,7 +24,6 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeoutException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
-
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,11 +38,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 import org.zeroturnaround.exec.InvalidExitValueException;
-import org.zeroturnaround.exec.ProcessExecutor;
 import org.zeroturnaround.exec.ProcessResult;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
+ 
 /*
  * Controller for LoadFile.jsp page.
  * @author	Martin Lisý
@@ -54,7 +52,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @EnableAsync
 public class LoadFIleController {
 	@Autowired
-    BroProcessService bps;
+    private ExternalProcessService service;
 	private Logger logger = LoggerFactory.getLogger(LoadFIleController.class);
 	
 	private DateFormat hourFormat = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ssss");
@@ -135,7 +133,7 @@ public class LoadFIleController {
                 if(!stored) {
                 	List<Future<ProcessResult>> results = new ArrayList<>();
                 	for (String filePath : fileNames){
-                		results.add(bps.broProcess(filePath));
+                		results.add(service.broProcess(filePath));
                 	}
                 	boolean test = false;
                 	while (!test){
@@ -306,7 +304,7 @@ public class LoadFIleController {
      * @param	attributes		Collection attributes of processed log files.
      * @param	f				Specified log file from which the attributes are being obtained.
      */
-    public void getAtts(TreeSet<String> attributes, File f) throws IOException{
+	public void getAtts(TreeSet<String> attributes, File f) throws IOException{
     	BufferedReader br = Files.newBufferedReader(f.toPath(), Charset.forName("ISO-8859-1")); 
     	
     	ObjectMapper objectMapper = new ObjectMapper();

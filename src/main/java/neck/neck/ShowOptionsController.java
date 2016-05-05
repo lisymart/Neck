@@ -20,7 +20,6 @@ import java.util.TreeSet;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeoutException;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.io.FileUtils;
@@ -35,18 +34,20 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
+import org.zeroturnaround.exec.ProcessResult;
 import com.google.common.io.ByteStreams;
 
 /*
  * Class ShowOptionsController shows the supported transformations over the uploaded files.
  * @author Martin Lisý 
  */
+
 @Controller
 @SpringBootApplication
 @EnableAsync
 public class ShowOptionsController {    
 	@Autowired
-	private LogstashProcessService lps;
+	private ExternalProcessService service;
 	
 	private DateFormat hourFormat = new SimpleDateFormat("HH-mm-ssss");
 	private double offset = 0.0000000001;
@@ -97,7 +98,7 @@ public class ShowOptionsController {
         TreeSet<String> lowercase = new TreeSet<>();
         TreeSet<String> anonymize = new TreeSet<>();
         TreeMap<String, String> newFields = new TreeMap<>();
-        List<Future<String>> results = new ArrayList<>();
+        List<Future<ProcessResult>> results = new ArrayList<>();
     	String[] checked = request.getParameterValues("checked");
         String store = request.getParameter("store");
         String stored = request.getParameter("stored");
@@ -417,7 +418,7 @@ public class ShowOptionsController {
             	for (String name : fileNames){
                 	File folder = new File("data/stored/" + name);
                 	for (File fileName : folder.listFiles()){        
-                		results.add(lps.process(fileName, configPath));
+                		results.add(service.logstashProcess(fileName, configPath));
                 	}
                 }
             }
@@ -427,7 +428,7 @@ public class ShowOptionsController {
             	for (String name : fileNames){
                 	File folder = new File("data/pendings/" + name);
                 	for (File fileName : folder.listFiles()){        
-                		results.add(lps.process(fileName, configPath));
+                		results.add(service.logstashProcess(fileName, configPath));
                 	}
                 }
             }
@@ -435,7 +436,7 @@ public class ShowOptionsController {
             if (stored.contains("single")){
             	for (String name : fileNames){
             		File file = new File("data/uploads/" + name);
-            		results.add(lps.process(file, configPath));
+            		results.add(service.logstashProcess(file, configPath));
             	}
             }
             
@@ -443,7 +444,7 @@ public class ShowOptionsController {
             boolean test = false;
             while (!test){
             	test = true;
-            	for (Future<String> wait : results){
+            	for (Future<ProcessResult> wait : results){
             		if (wait.isDone()) test &= true;
             		else test &= false;
             	}

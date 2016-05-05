@@ -22,7 +22,7 @@
 <a> If any error occurs, please fix it and restart the application (and terminal too). </a>
 <br>
 <br>
-<h4> Enter your Elasticsearch location: </h4>
+<h4> Enter your Elasticsearch location (e.g.: 192.168.5.24:9200): </h4>
 <input type="text" name="EShost" value="localhost:9200" autofocus = "autofocus" required = "required">
 <br>
 <br>

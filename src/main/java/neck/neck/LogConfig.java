@@ -200,7 +200,7 @@ public class LogConfig {
         
         //Output filter definition with selected Elasticsearch cluster setting.
         writerSh.println("output { elasticsearch { hosts => [\"" + host + "\"] }");
-        writerSh.println("stdout { codec => rubydebug }");
+        //writerSh.println("stdout { codec => rubydebug }");
         writerSh.println("}");
         writerSh.close();
     }

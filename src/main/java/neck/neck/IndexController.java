@@ -18,10 +18,6 @@ import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.ModelAndView;
 import org.zeroturnaround.exec.InvalidExitValueException;
-import org.zeroturnaround.exec.ProcessExecutor;
-
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 /*
  * Controller of index.jsp page. 
@@ -40,21 +36,18 @@ public class IndexController {
      */
     @RequestMapping(value = "/index", method = RequestMethod.POST)
     public ModelAndView index(HttpServletRequest request) throws TimeoutException, InvalidExitValueException, IOException, InterruptedException, ServletException {
-    	Logger logger = LoggerFactory.getLogger(BroProcessService.class);
+    	Logger logger = LoggerFactory.getLogger(IndexController.class);
     	logger.info("Checking the Elastic health.");;
     	String message = "";
     	String EShost = request.getParameter("EShost");
     	
     	// Checking if selected Elasticsearch cluster is alive
-        String output = new ProcessExecutor().command("curl", "--silent", "http://" + EShost + "/_cluster/health")
-                    .readOutput(true).execute()
-                    .outputUTF8();    
+    	RestTemplate template = new RestTemplate();
         Map<String,String> elasticHealth = new HashMap<String, String>();
-        ObjectMapper objectMapper = new ObjectMapper();
-        
         try {
-        	elasticHealth = objectMapper.readValue(output.getBytes(), HashMap.class);
-        } catch (JsonMappingException ex) {
+        	elasticHealth.putAll(template.getForObject("http://" + EShost + "/_cluster/health", Map.class));
+        } catch (RestClientException ex) {
+        	logger.error(ex.getLocalizedMessage());
         	logger.warn("Elasticsearch is not running. Start ES or check host and try again.");
         	message += "Elasticsearch is not running. Start ES or check host and try again.";
         	
@@ -72,9 +65,9 @@ public class IndexController {
         
        	else {
         // If paths.txt does not exist, checking of necessary installation is required.
-    	PathsController pc = new PathsController();
+    	ExternalProcessService service = new ExternalProcessService();
     	List<String> check =  new ArrayList<>();
-    	check.addAll(pc.checkInstallations());
+    	check.addAll(service.checkInstallations());
         if (check.size() < 2){
         	if (!check.contains("bro")) message += "Bro is not installed or properly set.<br>";
         	if (!check.contains("logstash")) message += "Logstash is not installed or properly set.<br>";
