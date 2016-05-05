@@ -34,7 +34,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
-import org.zeroturnaround.exec.ProcessResult;
 import com.google.common.io.ByteStreams;
 
 /*
@@ -98,7 +97,7 @@ public class ShowOptionsController {
         TreeSet<String> lowercase = new TreeSet<>();
         TreeSet<String> anonymize = new TreeSet<>();
         TreeMap<String, String> newFields = new TreeMap<>();
-        List<Future<ProcessResult>> results = new ArrayList<>();
+        List<Future<String>> results = new ArrayList<>();
     	String[] checked = request.getParameterValues("checked");
         String store = request.getParameter("store");
         String stored = request.getParameter("stored");
@@ -444,7 +443,7 @@ public class ShowOptionsController {
             boolean test = false;
             while (!test){
             	test = true;
-            	for (Future<ProcessResult> wait : results){
+            	for (Future<String> wait : results){
             		if (wait.isDone()) test &= true;
             		else test &= false;
             	}

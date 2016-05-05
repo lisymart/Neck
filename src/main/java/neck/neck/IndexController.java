@@ -49,7 +49,7 @@ public class IndexController {
         } catch (RestClientException ex) {
         	logger.error(ex.getLocalizedMessage());
         	logger.warn("Elasticsearch is not running. Start ES or check host and try again.");
-        	message += "Elasticsearch is not running. Start ES or check host and try again.";
+        	message += "Elasticsearch is not running. Start ES or check host and try again.<br>";
         	
         }
 		if (!elasticHealth.isEmpty()) {

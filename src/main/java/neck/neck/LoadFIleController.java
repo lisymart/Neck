@@ -131,14 +131,14 @@ public class LoadFIleController {
         //Pcap file needs to be processed by Bro before transformations are allowed.
             case "pcap" : 
                 if(!stored) {
-                	List<Future<ProcessResult>> results = new ArrayList<>();
+                	List<Future<String>> results = new ArrayList<>();
                 	for (String filePath : fileNames){
                 		results.add(service.broProcess(filePath));
                 	}
                 	boolean test = false;
                 	while (!test){
                 		test = true;
-                		for (Future<ProcessResult> wait : results){
+                		for (Future<String> wait : results){
                 			if (wait.isDone()) test &= true;
                 			else test &= false;
                 		}
