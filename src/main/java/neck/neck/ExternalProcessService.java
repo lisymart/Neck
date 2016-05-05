@@ -126,9 +126,6 @@ public class ExternalProcessService {
          
         Files.setPosixFilePermissions(Paths.get(dirPath + "/logstashExecutor.sh"), perms);
         
-        //new ProcessExecutor().command("chmod", "755", dirPath + "/logstashExecutor.sh")
-        //.readOutput(true).execute();
-        
         return running; 
     }
 }
