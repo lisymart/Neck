@@ -46,7 +46,7 @@ import com.google.common.io.ByteStreams;
 @EnableAsync
 public class ShowOptionsController {    
 	@Autowired
-	private ExternalProcessService service;
+	private LogstashProcessService service;
 	
 	private DateFormat hourFormat = new SimpleDateFormat("HH-mm-ssss");
 	private double offset = 0.0000000001;

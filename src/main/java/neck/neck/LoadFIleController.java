@@ -38,7 +38,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 import org.zeroturnaround.exec.InvalidExitValueException;
-import org.zeroturnaround.exec.ProcessResult;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.ObjectMapper;
  
@@ -52,7 +51,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @EnableAsync
 public class LoadFIleController {
 	@Autowired
-    private ExternalProcessService service;
+    private BroProcessService service;
+	
 	private Logger logger = LoggerFactory.getLogger(LoadFIleController.class);
 	
 	private DateFormat hourFormat = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ssss");

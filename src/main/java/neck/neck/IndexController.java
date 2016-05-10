@@ -65,7 +65,7 @@ public class IndexController {
         
        	else {
         // If paths.txt does not exist, checking of necessary installation is required.
-    	ExternalProcessService service = new ExternalProcessService();
+    	PathsController service = new PathsController();
     	List<String> check =  new ArrayList<>();
     	check.addAll(service.checkInstallations());
         if (check.size() < 2){
